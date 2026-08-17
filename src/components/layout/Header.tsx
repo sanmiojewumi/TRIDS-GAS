@@ -28,56 +28,15 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Mix Color Button Gradient Map for Each Menu Option
   const navLinks = [
-    {
-      name: 'Home',
-      href: '/',
-      gradient: 'from-blue-600 via-emerald-500 to-amber-500',
-      activeBorder: 'border-amber-400',
-    },
-    {
-      name: 'Services',
-      href: '/services',
-      gradient: 'from-red-600 via-amber-500 to-emerald-500',
-      activeBorder: 'border-red-400',
-    },
-    {
-      name: 'About',
-      href: '/about',
-      gradient: 'from-emerald-600 via-blue-600 to-amber-500',
-      activeBorder: 'border-emerald-400',
-    },
-    {
-      name: 'Projects',
-      href: '/projects',
-      gradient: 'from-amber-500 via-red-600 to-blue-600',
-      activeBorder: 'border-amber-400',
-    },
-    {
-      name: 'Reviews',
-      href: '/reviews',
-      gradient: 'from-yellow-400 via-amber-500 to-emerald-500',
-      activeBorder: 'border-yellow-400',
-    },
-    {
-      name: 'Areas',
-      href: '/areas',
-      gradient: 'from-blue-600 via-sky-400 to-emerald-500',
-      activeBorder: 'border-sky-400',
-    },
-    {
-      name: 'Knowledge',
-      href: '/blog',
-      gradient: 'from-emerald-500 via-blue-500 to-amber-500',
-      activeBorder: 'border-emerald-400',
-    },
-    {
-      name: 'Contact',
-      href: '/contact',
-      gradient: 'from-red-600 via-yellow-400 to-amber-500',
-      activeBorder: 'border-red-400',
-    },
+    { name: 'Home', href: '/' },
+    { name: 'Services', href: '/services' },
+    { name: 'About', href: '/about' },
+    { name: 'Projects', href: '/projects' },
+    { name: 'Reviews', href: '/reviews' },
+    { name: 'Areas', href: '/areas' },
+    { name: 'Knowledge', href: '/blog' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   const formattedPhone = settings.phone.replace(/^0/, '44').replace(/\s+/g, '');
@@ -121,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
           {/* Left: Enlarged Brand Logo */}
           <TRIDSLogo size="md" />
 
-          {/* Center: 50% Enlarged Mix-Color Button Navigation Bar */}
+          {/* Center: White Button Navigation Bar (50% enlarged 16px font-extrabold) */}
           <div className="hidden xl:flex items-center gap-2.5">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -129,10 +88,10 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`px-4 py-2 rounded-xl text-base font-extrabold tracking-wide transition-all duration-200 transform hover:scale-105 shadow-md flex items-center justify-center ${
+                  className={`px-4 py-2 rounded-xl text-base font-extrabold tracking-wide transition-all duration-200 transform hover:scale-105 shadow-md flex items-center justify-center bg-white text-slate-950 hover:bg-amber-400 hover:text-slate-950 ${
                     isActive
-                      ? `bg-gradient-to-r ${link.gradient} text-slate-950 shadow-glow-gold border-2 ${link.activeBorder}`
-                      : `bg-[#0F1C3F] text-white hover:bg-gradient-to-r ${link.gradient} hover:text-slate-950 border border-[#1E3A8A] hover:border-amber-400`
+                      ? 'border-2 border-amber-400 shadow-glow-gold scale-105 ring-2 ring-amber-400/50'
+                      : 'border-2 border-slate-200'
                   }`}
                 >
                   {link.name}
@@ -189,17 +148,15 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
               </a>
             </div>
 
-            {/* Mobile Mix Color Buttons Grid */}
+            {/* Mobile White Buttons Grid */}
             <div className="grid grid-cols-2 gap-2.5">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-4 py-3 rounded-xl text-base font-extrabold text-center transition-all ${
-                    pathname === link.href
-                      ? `bg-gradient-to-r ${link.gradient} text-slate-950 shadow-glow-gold border-2 ${link.activeBorder}`
-                      : `bg-[#0F1C3F] text-white hover:bg-gradient-to-r ${link.gradient} hover:text-slate-950 border border-[#1E3A8A]`
+                  className={`block px-4 py-3 rounded-xl text-base font-extrabold text-center transition-all bg-white text-slate-950 hover:bg-amber-400 ${
+                    pathname === link.href ? 'border-2 border-amber-400 shadow-glow-gold' : 'border-2 border-slate-200'
                   }`}
                 >
                   {link.name}
