@@ -41,6 +41,20 @@ model SiteSettings {
   updatedAt              DateTime @updatedAt
 }
 
+model HeroSlide {
+  id          String   @id @default(uuid())
+  title       String
+  category    String   @default("BOILER INSTALLATION")
+  description String
+  image       String
+  badge       String
+  techSpec    String
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Service {
   id          String   @id @default(uuid())
   name        String
@@ -154,4 +168,15 @@ model ServiceArea {
   seoDescription String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model FaqItem {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String
+  category  String   @default("General")
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

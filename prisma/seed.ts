@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding TRIDS Gas & Plumbing Database with Media Gallery & Official Details...');
+  console.log('Seeding TRIDS Gas & Plumbing Database with Full Admin Control Data...');
 
   // 1. Admin User
   const passwordHash = await bcrypt.hash('admin123', 10);
@@ -19,74 +19,62 @@ async function main() {
     },
   });
 
-  // 2. Initial Picture and Video Media Items for Homepage & Admin Management
-  const initialMedia = [
+  // 2. Default Hero Slides for Admin Slide Control
+  const defaultSlides = [
     {
-      title: 'Worcester Bosch Combi Boiler Installation',
-      type: 'IMAGE',
-      url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
-      category: 'BOILER',
-      description: 'High-efficiency A-rated combi boiler installation with magnetic filter and Nest thermostat in Crewe.',
-      location: 'Crewe, Cheshire',
-      featured: true,
+      id: 'slide-1',
+      title: 'Ideal Combi Boiler & Precision Copper Pipework',
+      category: 'BOILER INSTALLATION',
+      description: 'Wall-hung Ideal Exclusive combi boiler with 22mm soldered copper pipework, gas meter valve & magnetic filter.',
+      image: '/images/slides/slide1.jpg',
+      badge: 'Ideal Combi Boiler',
+      techSpec: 'Soldered Copper Gas Line & MagnaClean Filter',
+      order: 1,
+      active: true,
     },
     {
-      title: 'Boiler Servicing & Flue Gas Diagnostics Walkthrough',
-      type: 'VIDEO',
-      url: 'https://assets.mixkit.co/videos/preview/mixkit-plumber-working-on-a-pipe-with-a-wrench-41549-large.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=800&q=80',
-      category: 'BOILER',
-      description: 'Step-by-step video demonstration of digital flue gas combustion testing and safety checks.',
-      location: 'Nantwich, Cheshire',
-      featured: true,
+      id: 'slide-2',
+      title: 'Rinnai Continuous Flow Digital Water Heater',
+      category: 'WATER HEATER SYSTEM',
+      description: 'Wall-mounted Rinnai continuous flow gas water heater with microprocessor digital display set to 120°F.',
+      image: '/images/slides/slide4.jpg',
+      badge: 'Rinnai Water Heater',
+      techSpec: 'Microprocessor Digital Temperature Control (120°F)',
+      order: 2,
+      active: true,
     },
     {
-      title: 'Unvented Hot Water Cylinder Upgrade',
-      type: 'IMAGE',
-      url: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=1200&q=80',
-      category: 'PLUMBING',
-      description: '250L stainless steel unvented cylinder installation for high-pressure multi-bathroom water supply.',
-      location: 'Sandbach, Cheshire',
-      featured: true,
+      id: 'slide-3',
+      title: 'Boiler With Casing Removed & Ongoing Flue Gas Analysis',
+      category: 'INTERNAL DIAGNOSTICS',
+      description: 'Front casing removed exposing burner chamber, heat exchanger, gas valve & ongoing flue gas analysis test.',
+      image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
+      badge: 'Boiler Casing Off & FGA Test',
+      techSpec: 'Combustion Chamber Inspection & Flue Probe Analysis',
+      order: 3,
+      active: true,
     },
     {
-      title: 'Precision Copper Pipework & Thermostatic Brassware',
-      type: 'IMAGE',
-      url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
-      category: 'WORKMANSHIP',
-      description: 'Concealed thermostatic brassware installation with 22mm soldered copper pipework.',
-      location: 'Winsford, Cheshire',
-      featured: true,
-    },
-    {
-      title: 'Gas Safety CP12 Inspection & Tightness Test Video',
-      type: 'VIDEO',
-      url: 'https://assets.mixkit.co/videos/preview/mixkit-worker-fixing-a-machine-part-41551-large.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=800&q=80',
-      category: 'GAS_SAFETY',
-      description: 'Video recording of digital manometer gas tightness testing for a landlord CP12 safety check.',
-      location: 'Congleton, Cheshire',
-      featured: true,
-    },
-    {
-      title: 'Range Cooker & Gas Hob Supply Pipe Installation',
-      type: 'IMAGE',
-      url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1200&q=80',
-      category: 'GAS_SAFETY',
-      description: 'New gas supply line with stability chain and gas tightness test for range cooker.',
-      location: 'Stockport, Manchester',
-      featured: true,
+      id: 'slide-4',
+      title: 'Flue Gas Analyser & Monitor Tablet',
+      category: 'COMBUSTION DIAGNOSTICS',
+      description: 'Electronic digital flue gas analyzer paired with wireless monitor tablet showing live CO (53 PPM) & CO2 (8.5%) ratios.',
+      image: '/images/slides/slide2.jpg',
+      badge: 'Flue Gas Analyser & Tablet',
+      techSpec: 'TPI DC710 Smart Flue Gas Analyser & Live Report',
+      order: 4,
+      active: true,
     },
   ];
 
-  for (const m of initialMedia) {
-    const existing = await prisma.mediaItem.findFirst({ where: { title: m.title } });
+  for (const s of defaultSlides) {
+    const existing = await prisma.heroSlide.findUnique({ where: { id: s.id } });
     if (!existing) {
-      await prisma.mediaItem.create({ data: m });
+      await prisma.heroSlide.create({ data: s });
     }
   }
 
-  console.log('Database seeded with Media Gallery items (Pictures & Videos).');
+  console.log('Database seeded with Hero Slides for admin control.');
 }
 
 main()

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { Inbox, CalendarDays, Wrench, FolderKanban, ArrowRight, ShieldCheck, Clock, Image as ImageIcon, Video, Plus } from 'lucide-react';
+import { Inbox, CalendarDays, Wrench, FolderKanban, ArrowRight, ShieldCheck, Clock, Image as ImageIcon, Layers, Settings, MessageSquare, Plus, FileText } from 'lucide-react';
 
 export default async function AdminDashboardPage() {
   const isAuth = await verifyAdminAuth();
@@ -14,6 +14,8 @@ export default async function AdminDashboardPage() {
   const bookingsCount = await db.booking.count({ where: { status: 'CONFIRMED' } });
   const totalServices = await db.service.count();
   const totalMedia = await db.mediaItem.count();
+  const totalSlides = await db.heroSlide.count();
+  const totalReviews = await db.testimonial.count();
 
   const recentEnquiries = await db.enquiry.findMany({
     orderBy: { createdAt: 'desc' },
@@ -30,66 +32,116 @@ export default async function AdminDashboardPage() {
       {/* Dashboard Top Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
         <div>
-          <h1 className="text-3xl font-extrabold text-white font-heading">OPERATIONS DASHBOARD</h1>
-          <p className="text-xs text-slate-400 font-mono mt-1">TRIDS Gas & Plumbing • Live System Monitor</p>
+          <h1 className="text-3xl font-extrabold text-white font-heading">FULL CONTROL ADMIN PORTAL</h1>
+          <p className="text-xs text-slate-400 font-mono mt-1">TRIDS Gas & Plumbing • Master Management System</p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Link
-            href="/admin/gallery"
+            href="/admin/slides"
             className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-glow-gold flex items-center gap-1.5"
           >
-            <Plus className="w-4 h-4" /> Manage Media Gallery
+            <Layers className="w-4 h-4" /> Control Slides
           </Link>
+
+          <Link
+            href="/admin/services"
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-glow-blue flex items-center gap-1.5"
+          >
+            <Wrench className="w-4 h-4" /> Manage Services
+          </Link>
+
           <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-950/80 px-3 py-2 rounded-xl border border-emerald-500/40">
-            <ShieldCheck className="w-4 h-4" /> Gas Safe Compliant (979661)
+            <ShieldCheck className="w-4 h-4" /> Gas Safe 979661
           </div>
         </div>
       </div>
 
-      {/* Overview Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="glass-card p-5 rounded-2xl border border-slate-800 space-y-2">
+      {/* MASTER CONTROL CARDS GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        
+        {/* 1. Services Control */}
+        <Link href="/admin/services" className="glass-card p-5 rounded-2xl border border-[#1E3A8A] hover:border-amber-400 space-y-3 group transition-all">
           <div className="flex items-center justify-between text-amber-400">
-            <span className="text-xs font-mono font-bold uppercase">New Enquiries</span>
-            <Inbox className="w-5 h-5" />
+            <span className="text-xs font-mono font-bold uppercase">Services Manager</span>
+            <Wrench className="w-5 h-5 group-hover:scale-110 transition-transform text-amber-400" />
           </div>
-          <div className="text-3xl font-extrabold text-white font-heading">{enquiriesCount}</div>
-          <div className="text-[11px] text-slate-400">Total Enquiries: {totalEnquiries}</div>
-        </div>
-
-        <div className="glass-card p-5 rounded-2xl border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-amber-400">
-            <span className="text-xs font-mono font-bold uppercase">Upcoming Bookings</span>
-            <CalendarDays className="w-5 h-5" />
-          </div>
-          <div className="text-3xl font-extrabold text-white font-heading">{bookingsCount}</div>
-          <div className="text-[11px] text-slate-400">Confirmed Slots</div>
-        </div>
-
-        <div className="glass-card p-5 rounded-2xl border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-amber-400">
-            <span className="text-xs font-mono font-bold uppercase">Active Services</span>
-            <Wrench className="w-5 h-5" />
-          </div>
-          <div className="text-3xl font-extrabold text-white font-heading">{totalServices}</div>
-          <div className="text-[11px] text-slate-400">Gas & Plumbing Offerings</div>
-        </div>
-
-        <Link href="/admin/gallery" className="glass-card p-5 rounded-2xl border border-amber-500/40 hover:border-amber-400 space-y-2 group transition-all">
-          <div className="flex items-center justify-between text-amber-400">
-            <span className="text-xs font-mono font-bold uppercase">Media Gallery</span>
-            <ImageIcon className="w-5 h-5 text-amber-400 group-hover:scale-110 transition-transform" />
-          </div>
-          <div className="text-3xl font-extrabold text-white font-heading">{totalMedia}</div>
-          <div className="text-[11px] text-amber-400 flex items-center gap-1 font-mono">
-            Upload / Remove Pictures & Videos <ArrowRight className="w-3 h-3" />
+          <div className="text-3xl font-extrabold text-white font-heading">{totalServices} Services</div>
+          <p className="text-xs text-slate-300">Add new gas or plumbing services, edit descriptions, toggle active state, or remove services.</p>
+          <div className="text-xs text-amber-400 font-mono font-bold flex items-center gap-1">
+            Open Services Manager <ArrowRight className="w-3.5 h-3.5" />
           </div>
         </Link>
+
+        {/* 2. Hero Slideshow Control */}
+        <Link href="/admin/slides" className="glass-card p-5 rounded-2xl border border-[#1E3A8A] hover:border-amber-400 space-y-3 group transition-all">
+          <div className="flex items-center justify-between text-amber-400">
+            <span className="text-xs font-mono font-bold uppercase">Homepage Slide Control</span>
+            <Layers className="w-5 h-5 group-hover:scale-110 transition-transform text-amber-400" />
+          </div>
+          <div className="text-3xl font-extrabold text-white font-heading">{totalSlides} Hero Slides</div>
+          <p className="text-xs text-slate-300">Add new slides, upload photos, edit technical specs, reorder slide sequence, or hide slides.</p>
+          <div className="text-xs text-amber-400 font-mono font-bold flex items-center gap-1">
+            Open Slide Controller <ArrowRight className="w-3.5 h-3.5" />
+          </div>
+        </Link>
+
+        {/* 3. Media Gallery (Pictures & Videos) */}
+        <Link href="/admin/gallery" className="glass-card p-5 rounded-2xl border border-[#1E3A8A] hover:border-amber-400 space-y-3 group transition-all">
+          <div className="flex items-center justify-between text-amber-400">
+            <span className="text-xs font-mono font-bold uppercase">Media Gallery (Photos/Videos)</span>
+            <ImageIcon className="w-5 h-5 group-hover:scale-110 transition-transform text-amber-400" />
+          </div>
+          <div className="text-3xl font-extrabold text-white font-heading">{totalMedia} Items</div>
+          <p className="text-xs text-slate-300">Upload pictures and videos from device, manage work showcase items, or remove media content.</p>
+          <div className="text-xs text-amber-400 font-mono font-bold flex items-center gap-1">
+            Manage Photo & Video Gallery <ArrowRight className="w-3.5 h-3.5" />
+          </div>
+        </Link>
+
+        {/* 4. Site Settings & Text Contents */}
+        <Link href="/admin/settings" className="glass-card p-5 rounded-2xl border border-[#1E3A8A] hover:border-amber-400 space-y-3 group transition-all">
+          <div className="flex items-center justify-between text-amber-400">
+            <span className="text-xs font-mono font-bold uppercase">Website Settings & Text</span>
+            <Settings className="w-5 h-5 group-hover:scale-110 transition-transform text-amber-400" />
+          </div>
+          <div className="text-xl font-extrabold text-white font-heading">Global Site Settings</div>
+          <p className="text-xs text-slate-300">Edit phone number, email address, Gas Safe Reg 979661, emergency banners, opening hours & copy.</p>
+          <div className="text-xs text-amber-400 font-mono font-bold flex items-center gap-1">
+            Edit Site Settings & Copy <ArrowRight className="w-3.5 h-3.5" />
+          </div>
+        </Link>
+
+        {/* 5. Customer Reviews & Testimonials */}
+        <Link href="/admin/testimonials" className="glass-card p-5 rounded-2xl border border-[#1E3A8A] hover:border-amber-400 space-y-3 group transition-all">
+          <div className="flex items-center justify-between text-amber-400">
+            <span className="text-xs font-mono font-bold uppercase">Customer Reviews</span>
+            <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform text-amber-400" />
+          </div>
+          <div className="text-3xl font-extrabold text-white font-heading">{totalReviews} Reviews</div>
+          <p className="text-xs text-slate-300">Add new customer reviews, edit ratings, approve testimonials, or remove bad reviews.</p>
+          <div className="text-xs text-amber-400 font-mono font-bold flex items-center gap-1">
+            Manage Customer Reviews <ArrowRight className="w-3.5 h-3.5" />
+          </div>
+        </Link>
+
+        {/* 6. Enquiries & Quote Requests */}
+        <Link href="/admin/enquiries" className="glass-card p-5 rounded-2xl border border-[#1E3A8A] hover:border-amber-400 space-y-3 group transition-all">
+          <div className="flex items-center justify-between text-amber-400">
+            <span className="text-xs font-mono font-bold uppercase">Quote Requests & Enquiries</span>
+            <Inbox className="w-5 h-5 group-hover:scale-110 transition-transform text-amber-400" />
+          </div>
+          <div className="text-3xl font-extrabold text-white font-heading">{enquiriesCount} New</div>
+          <p className="text-xs text-slate-300">View customer submissions, manage enquiry status, add internal notes, and send email responses.</p>
+          <div className="text-xs text-amber-400 font-mono font-bold flex items-center gap-1">
+            View All Enquiries ({totalEnquiries}) <ArrowRight className="w-3.5 h-3.5" />
+          </div>
+        </Link>
+
       </div>
 
       {/* Recent Enquiries & Bookings Tables */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
         
         {/* Recent Enquiries */}
         <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">

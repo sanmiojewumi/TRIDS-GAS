@@ -5,19 +5,22 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, ChevronLeft, ChevronRight, Flame, Gauge, Layers, CheckCircle2, Thermometer } from 'lucide-react';
 
-interface SlideItem {
+export interface SlideItem {
   id: string;
   title: string;
   category: string;
   description: string;
   image: string;
   badge: string;
-  icon: any;
   techSpec: string;
 }
 
 export const HeroSlideshow: React.FC<{ gasSafeNumber: string }> = ({ gasSafeNumber }) => {
-  const slides: SlideItem[] = [
+  const [slides, setSlides] = useState<SlideItem[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Fallback default slides
+  const defaultSlides: SlideItem[] = [
     {
       id: 'slide-1-ideal',
       title: 'Ideal Combi Boiler & Precision Copper Pipework',
@@ -25,7 +28,6 @@ export const HeroSlideshow: React.FC<{ gasSafeNumber: string }> = ({ gasSafeNumb
       description: 'Wall-hung Ideal Exclusive combi boiler with 22mm soldered copper pipework, gas meter valve & magnetic filter.',
       image: '/images/slides/slide1.jpg',
       badge: 'Ideal Combi Boiler',
-      icon: Flame,
       techSpec: 'Soldered Copper Gas Line & MagnaClean Filter',
     },
     {
@@ -35,7 +37,6 @@ export const HeroSlideshow: React.FC<{ gasSafeNumber: string }> = ({ gasSafeNumb
       description: 'Wall-mounted Rinnai continuous flow gas water heater with microprocessor digital display set to 120°F.',
       image: '/images/slides/slide4.jpg',
       badge: 'Rinnai Water Heater',
-      icon: Thermometer,
       techSpec: 'Microprocessor Digital Temperature Control (120°F)',
     },
     {
@@ -45,7 +46,6 @@ export const HeroSlideshow: React.FC<{ gasSafeNumber: string }> = ({ gasSafeNumb
       description: 'Front casing removed exposing burner chamber, heat exchanger, gas valve & ongoing flue gas analysis test.',
       image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
       badge: 'Boiler Casing Off & FGA Test',
-      icon: Layers,
       techSpec: 'Combustion Chamber Inspection & Flue Probe Analysis',
     },
     {
@@ -55,26 +55,40 @@ export const HeroSlideshow: React.FC<{ gasSafeNumber: string }> = ({ gasSafeNumb
       description: 'Electronic digital flue gas analyzer paired with wireless monitor tablet showing live CO (53 PPM) & CO2 (8.5%) ratios.',
       image: '/images/slides/slide2.jpg',
       badge: 'Flue Gas Analyser & Tablet',
-      icon: Gauge,
       techSpec: 'TPI DC710 Smart Flue Gas Analyser & Live Report',
     },
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const res = await fetch('/api/slides');
+        const data = await res.json();
+        if (data.slides && data.slides.length > 0) {
+          const activeOnly = data.slides.filter((s: any) => s.active);
+          if (activeOnly.length > 0) setSlides(activeOnly);
+        }
+      } catch (err) {
+        console.error('Error loading dynamic slides:', err);
+      }
+    };
+    fetchSlides();
+  }, []);
+
+  const slideList = slides.length > 0 ? slides : defaultSlides;
 
   // Auto-play slideshow every 4.5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slides.length);
+      setCurrentIndex((prev) => (prev + 1) % slideList.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [slideList.length]);
 
-  const currentSlide = slides[currentIndex];
-  const SlideIcon = currentSlide.icon;
+  const currentSlide = slideList[currentIndex] || defaultSlides[0];
 
-  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % slides.length);
-  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % slideList.length);
+  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + slideList.length) % slideList.length);
 
   return (
     <div className="relative rounded-3xl overflow-hidden border-2 border-[#1E3A8A] bg-[#0F1C3F]/95 shadow-2xl group select-none">
@@ -123,7 +137,7 @@ export const HeroSlideshow: React.FC<{ gasSafeNumber: string }> = ({ gasSafeNumb
         <div className="flex items-center justify-between gap-2">
           {/* Badge Pill */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#0F1C3F] border border-amber-400/40 text-amber-400 text-xs font-mono font-bold uppercase">
-            <SlideIcon className="w-3.5 h-3.5" />
+            <Flame className="w-3.5 h-3.5" />
             <span>{currentSlide.badge}</span>
           </div>
 
@@ -154,7 +168,7 @@ export const HeroSlideshow: React.FC<{ gasSafeNumber: string }> = ({ gasSafeNumb
       {/* Bottom Navigation Dots & Status */}
       <div className="p-3 bg-[#050A18] border-t border-[#1E3A8A] flex items-center justify-between">
         <div className="flex items-center gap-1.5 overflow-x-auto py-1">
-          {slides.map((_, i) => (
+          {slideList.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentIndex(i)}
@@ -167,7 +181,7 @@ export const HeroSlideshow: React.FC<{ gasSafeNumber: string }> = ({ gasSafeNumb
         </div>
 
         <span className="text-[10px] font-mono text-slate-400 font-bold uppercase">
-          Image {currentIndex + 1} of {slides.length}
+          Image {currentIndex + 1} of {slideList.length}
         </span>
       </div>
 
