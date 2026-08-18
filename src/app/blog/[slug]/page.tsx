@@ -107,7 +107,7 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
         </div>
 
         {/* Emergency Notice */}
-        <EmergencyBanner notice={settings.emergencyNotice} phone={settings.phone} />
+        <EmergencyBanner emergencyNotice={settings.emergencyNotice} />
 
       </div>
     </article>

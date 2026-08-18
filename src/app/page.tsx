@@ -110,9 +110,9 @@ export default async function HomePage() {
       slug: p.slug,
       excerpt: p.excerpt,
       category: p.category,
-      readTime: p.readTime,
+      featuredImage: p.featuredImage || '/images/slides/slide1.jpg',
       author: p.author,
-      date: p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recent',
+      publishedAt: p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recent',
     }));
   } catch (e) {
     console.error('Error loading blog posts for homepage:', e);
