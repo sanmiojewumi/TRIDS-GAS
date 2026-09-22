@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Image as ImageIcon, Video, Trash2, Plus, Upload, CheckCircle2, AlertCircle, ArrowLeft, Play, ExternalLink } from 'lucide-react';
+import { Image as ImageIcon, Video, Trash2, Plus, Upload, CheckCircle2, AlertCircle, ArrowLeft, Play, ExternalLink, Pencil } from 'lucide-react';
 
 interface MediaItemData {
   id: string;
@@ -15,6 +15,7 @@ interface MediaItemData {
   description?: string | null;
   location?: string | null;
   featured: boolean;
+  published?: boolean;
   createdAt: string;
 }
 
@@ -33,6 +34,7 @@ export default function AdminGalleryPage() {
   const [mediaUrl, setMediaUrl] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [editingItem, setEditingItem] = useState<MediaItemData | null>(null);
   
   const [uploading, setUploading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -81,6 +83,19 @@ export default function AdminGalleryPage() {
     }
   };
 
+  const resetForm = () => {
+    setTitle('');
+    setType('IMAGE');
+    setCategory('BOILER');
+    setDescription('');
+    setLocation('Crewe & Cheshire');
+    setMediaUrl('');
+    setThumbnailUrl('');
+    setSelectedFile(null);
+    setEditingItem(null);
+    setShowAddForm(false);
+  };
+
   const handleCreateMedia = async (e: React.FormEvent) => {
     e.preventDefault();
     setFeedback(null);
@@ -102,8 +117,8 @@ export default function AdminGalleryPage() {
     }
 
     try {
-      const res = await fetch('/api/gallery', {
-        method: 'POST',
+      const res = await fetch(editingItem ? `/api/gallery/${editingItem.id}` : '/api/gallery', {
+        method: editingItem ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title,
@@ -114,18 +129,14 @@ export default function AdminGalleryPage() {
           description,
           location,
           featured: true,
+          published: true,
         }),
       });
 
       const data = await res.json();
       if (data.success) {
-        setFeedback({ type: 'success', message: 'Media content added successfully!' });
-        setTitle('');
-        setMediaUrl('');
-        setThumbnailUrl('');
-        setDescription('');
-        setSelectedFile(null);
-        setShowAddForm(false);
+        setFeedback({ type: 'success', message: editingItem ? 'Media content updated successfully!' : 'Media content added successfully!' });
+        resetForm();
         fetchMedia();
       } else {
         setFeedback({ type: 'error', message: data.error || 'Failed to add media content.' });
@@ -134,6 +145,21 @@ export default function AdminGalleryPage() {
       console.error('Error creating media:', err);
       setFeedback({ type: 'error', message: 'An error occurred while creating media item.' });
     }
+  };
+
+  const handleEditMedia = (item: MediaItemData) => {
+    setEditingItem(item);
+    setTitle(item.title);
+    setType(item.type);
+    setCategory(item.category);
+    setDescription(item.description || '');
+    setLocation(item.location || '');
+    setMediaUrl(item.url);
+    setThumbnailUrl(item.thumbnailUrl || '');
+    setSelectedFile(null);
+    setShowAddForm(true);
+    setFeedback(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDeleteMedia = async (id: string, itemTitle: string) => {
@@ -183,10 +209,13 @@ export default function AdminGalleryPage() {
           </div>
 
           <button
-            onClick={() => setShowAddForm(!showAddForm)}
+            onClick={() => {
+              if (showAddForm) resetForm();
+              else setShowAddForm(true);
+            }}
             className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-glow-gold flex items-center justify-center gap-2"
           >
-            {showAddForm ? 'Cancel Add Form' : <><Plus className="w-4 h-4" /> Add New Picture or Video</>}
+            {showAddForm ? 'Close Form' : <><Plus className="w-4 h-4" /> Add New Picture or Video</>}
           </button>
         </div>
 
@@ -211,7 +240,7 @@ export default function AdminGalleryPage() {
         {showAddForm && (
           <div className="glass-card rounded-3xl p-6 sm:p-8 border border-[#1E3A8A] bg-[#0F1C3F]/95 shadow-2xl animate-in slide-in-from-top-4 duration-300">
             <h2 className="text-xl font-bold text-white font-heading mb-6 flex items-center gap-2">
-              <Upload className="w-5 h-5 text-amber-400" /> Upload or Add New Media Content
+              <Upload className="w-5 h-5 text-amber-400" /> {editingItem ? 'Edit Media Content' : 'Upload or Add New Media Content'}
             </h2>
 
             <form onSubmit={handleCreateMedia} className="space-y-5">
@@ -310,7 +339,7 @@ export default function AdminGalleryPage() {
                     Option 2: Paste Direct Image / MP4 Video URL
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     placeholder="https://images.unsplash.com/... or https://example.com/video.mp4"
                     value={mediaUrl}
                     onChange={(e) => setMediaUrl(e.target.value)}
@@ -325,7 +354,7 @@ export default function AdminGalleryPage() {
                     Video Poster / Thumbnail Image URL (Optional)
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     placeholder="https://images.unsplash.com/..."
                     value={thumbnailUrl}
                     onChange={(e) => setThumbnailUrl(e.target.value)}
@@ -350,7 +379,7 @@ export default function AdminGalleryPage() {
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddForm(false)}
+                  onClick={resetForm}
                   className="px-5 py-2.5 rounded-xl bg-[#070D1E] text-slate-300 border border-[#1E3A8A] text-xs font-bold"
                 >
                   Cancel
@@ -361,7 +390,7 @@ export default function AdminGalleryPage() {
                   disabled={uploading}
                   className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold shadow-glow-gold flex items-center gap-2 disabled:opacity-50"
                 >
-                  {uploading ? 'Uploading File...' : 'Upload Media Content'}
+                  {uploading ? 'Uploading File...' : editingItem ? 'Update Media Content' : 'Upload Media Content'}
                 </button>
               </div>
             </form>
@@ -496,12 +525,20 @@ export default function AdminGalleryPage() {
                       <ExternalLink className="w-3 h-3" /> View Media
                     </a>
 
-                    <button
-                      onClick={() => handleDeleteMedia(item.id, item.title)}
-                      className="px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/40 text-xs font-bold flex items-center gap-1.5 transition-all"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" /> Remove Content
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEditMedia(item)}
+                        className="px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white border border-blue-500/40 text-xs font-bold flex items-center gap-1.5 transition-all"
+                      >
+                        <Pencil className="w-3.5 h-3.5" /> Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMedia(item.id, item.title)}
+                        className="px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/40 text-xs font-bold flex items-center gap-1.5 transition-all"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Remove
+                      </button>
+                    </div>
                   </div>
                 </div>
 

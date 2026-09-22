@@ -1,5 +1,15 @@
 # TRIDS Gas & Plumbing changelog
 
+## Admin content management — 22 September 2026
+
+- Added full create, edit, publish/hide and delete controls for project case studies.
+- Added service-area management, including local page copy and SEO fields.
+- Added knowledge-article management for blog content, images, authors and SEO metadata.
+- Added FAQ management and connected published database FAQs to the public FAQ page.
+- Added editing to the existing photo/video gallery manager.
+- Added protected, validated admin content APIs and automatic public-page revalidation.
+- Added the new content managers to the admin sidebar.
+
 ## Security hardening — 22 September 2026
 
 - Replaced forgeable admin cookies with HMAC-SHA256 signed, eight-hour sessions.

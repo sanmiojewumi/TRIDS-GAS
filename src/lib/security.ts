@@ -80,3 +80,13 @@ export function isValidPhone(value: string): boolean {
 export function isValidPostcode(value: string): boolean {
   return /^[A-Za-z0-9][A-Za-z0-9\s-]{1,11}$/.test(value);
 }
+
+export function isSafeMediaUrl(value: string): boolean {
+  if (value.startsWith('/') && !value.startsWith('//')) return true;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}

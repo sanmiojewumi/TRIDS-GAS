@@ -14,6 +14,9 @@ import {
   LogOut,
   Layers,
   Images,
+  MapPinned,
+  Newspaper,
+  CircleHelp,
 } from 'lucide-react';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -69,6 +72,27 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
             >
               <FolderKanban className="w-4 h-4 text-amber-500" /> Project Gallery
+            </Link>
+
+            <Link
+              href="/admin/areas"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
+            >
+              <MapPinned className="w-4 h-4 text-amber-500" /> Service Areas
+            </Link>
+
+            <Link
+              href="/admin/articles"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
+            >
+              <Newspaper className="w-4 h-4 text-amber-500" /> Knowledge Articles
+            </Link>
+
+            <Link
+              href="/admin/faqs"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
+            >
+              <CircleHelp className="w-4 h-4 text-amber-500" /> FAQs
             </Link>
 
             <Link

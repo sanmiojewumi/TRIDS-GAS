@@ -97,7 +97,7 @@ async function main() {
   for (const slide of slides) {
     await prisma.heroSlide.upsert({
       where: { id: slide.id },
-      update: { image: slide.image, active: slide.active },
+      update: {},
       create: slide,
     });
   }
@@ -252,14 +252,7 @@ async function main() {
   for (const service of services) {
     await prisma.service.upsert({
       where: { slug: service.slug },
-      update: {
-        name: service.name,
-        description: service.description,
-        content: service.content,
-        category: service.category,
-        featured: service.featured,
-        active: true,
-      },
+      update: {},
       create: service,
     });
   }
@@ -279,7 +272,7 @@ async function main() {
   for (const area of areas) {
     await prisma.serviceArea.upsert({
       where: { slug: area.slug },
-      update: { name: area.name, description: area.description, active: true },
+      update: {},
       create: area,
     });
   }

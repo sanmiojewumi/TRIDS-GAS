@@ -2,6 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import { FAQSection } from '@/components/home/FAQSection';
 import { getSiteSettings } from '@/lib/settings';
+import { db } from '@/lib/db';
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions | TRIDS Gas & Plumbing Crewe',
@@ -10,11 +11,18 @@ export const metadata: Metadata = {
 };
 
 export default async function FAQPage() {
-  const settings = await getSiteSettings();
+  const [settings, faqs] = await Promise.all([
+    getSiteSettings(),
+    db.faqItem.findMany({
+      where: { published: true },
+      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+      select: { question: true, answer: true, category: true },
+    }),
+  ]);
 
   return (
     <div className="pt-8">
-      <FAQSection />
+      <FAQSection faqs={faqs} phone={settings.phone} />
     </div>
   );
 }

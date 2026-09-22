@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSettings {
+  id                     String   @id @default("default")
+  companyName            String   @default("TRIDS Gas & Plumbing")
+  tagline                String   @default("Gas Safe. Professionally Done.")
+  phone                  String   @default("07311038572")
+  email                  String   @default("tridsgasandplumbing@gmail.com")
+  gasSafeNumber          String   @default("979661")
+  engineerName           String   @default("")
+  engineerQualifications String   @default("Gas Safe Registered • NVQ Level 3 Heating & Ventilation • Unvented Hot Water Certified")
+  serviceArea            String   @default("Crewe, Winsford, Sandbach, Nantwich, Congleton, All Cheshire, Warrington, Stockport, Manchester, Stoke-on-Trent (50-mile radius)")
+  emergencyNotice        String   @default("If you smell gas or suspect a carbon monoxide leak, turn off your gas supply at the meter immediately and call the National Gas Emergency Service on 0800 111 999.")
+  heroHeading            String   @default("GAS & PLUMBING YOU CAN TRUST.")
+  heroSubheading         String   @default("Professional gas, heating and plumbing services delivered safely, efficiently and with attention to detail.")
+  primaryCtaText         String   @default("BOOK A SERVICE")
+  secondaryCtaText       String   @default("CALL NOW")
+  openingHours           String   @default("Mon - Fri: 08:00 - 18:00 | Emergency 24/7 Response")
+  address                String   @default("Based in Crewe, serving Cheshire, Greater Manchester, Staffordshire & 50-mile radius")
+  googleReviewsUrl       String   @default("#")
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model HeroSlide {
+  id          String   @id @default(uuid())
+  title       String
+  category    String   @default("BOILER INSTALLATION")
+  description String
+  image       String
+  badge       String
+  techSpec    String
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  category    String
+  description String
+  content     String
+  image       String?
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Enquiry {
+  id            String   @id @default(uuid())
+  name          String
+  phone         String
+  email         String
+  postcode      String
+  service       String
+  message       String
+  preferredDate String?
+  preferredTime String?
+  attachments   String?
+  status        String   @default("NEW")
+  adminNotes    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Booking {
+  id           String   @id @default(uuid())
+  customerName String
+  phone        String
+  email        String
+  postcode     String
+  service      String
+  date         String
+  time         String
+  status       String   @default("PENDING")
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  category    String
+  description String
+  beforeImage String?
+  afterImage  String
+  location    String?
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MediaItem {
+  id           String   @id @default(uuid())
+  title        String
+  type         String   @default("IMAGE")
+  url          String
+  thumbnailUrl String?
+  category     String   @default("BOILER")
+  description  String?
+  location     String?
+  published    Boolean  @default(true)
+  featured     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Testimonial {
+  id           String   @id @default(uuid())
+  customerName String
+  review       String
+  rating       Int      @default(5)
+  service      String
+  location     String?
+  published    Boolean  @default(true)
+  date         String
+  createdAt    DateTime @default(now())
+}
+
+model BlogPost {
+  id             String   @id @default(uuid())
+  title          String
+  slug           String   @unique
+  excerpt        String
+  content        String
+  featuredImage  String
+  category       String
+  author         String   @default("TRIDS Gas & Plumbing")
+  published      Boolean  @default(true)
+  publishedAt    DateTime @default(now())
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ServiceArea {
+  id             String   @id @default(uuid())
+  name           String
+  slug           String   @unique
+  description    String
+  active         Boolean  @default(true)
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model FaqItem {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String
+  category  String   @default("General")
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

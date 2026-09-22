@@ -10,10 +10,15 @@ export interface FAQItem {
   category?: string;
 }
 
-export const FAQSection: React.FC = () => {
+interface FAQSectionProps {
+  faqs?: FAQItem[];
+  phone?: string;
+}
+
+export const FAQSection: React.FC<FAQSectionProps> = ({ faqs = [], phone = '07311038572' }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const faqs: FAQItem[] = [
+  const defaultFaqs: FAQItem[] = [
     {
       question: 'How do I verify that TRIDS Gas & Plumbing is Gas Safe registered?',
       answer:
@@ -57,6 +62,7 @@ export const FAQSection: React.FC = () => {
       category: 'BOOKINGS',
     },
   ];
+  const displayedFaqs = faqs.length > 0 ? faqs : defaultFaqs;
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -85,7 +91,7 @@ export const FAQSection: React.FC = () => {
 
         {/* Accordion List */}
         <div className="space-y-4">
-          {faqs.map((faq, index) => {
+          {displayedFaqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
               <div
@@ -144,11 +150,11 @@ export const FAQSection: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <a
-              href="tel:07311038572"
+              href={`tel:${phone}`}
               className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold shadow-glow-gold flex items-center gap-2 font-mono"
             >
               <PhoneCall className="w-4 h-4" />
-              <span>07311038572</span>
+              <span>{phone}</span>
             </a>
 
             <Link
