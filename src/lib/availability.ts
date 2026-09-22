@@ -47,19 +47,12 @@ export function isValidAvailabilityTime(time: string): boolean {
   return minutes >= 0 && minutes < 24 * 60;
 }
 
-export async function getAvailableSlots(date: string): Promise<string[]> {
-  if (!isValidAvailabilityDate(date)) return [];
-
-  const dayOfWeek = new Date(`${date}T12:00:00Z`).getUTCDay();
-  const [rule, blocked, bookings] = await Promise.all([
-    db.availabilityDay.findUnique({ where: { dayOfWeek } }),
-    db.blockedDate.findUnique({ where: { date } }),
-    db.booking.findMany({
-      where: { date, status: { in: ['PENDING', 'CONFIRMED'] } },
-      select: { time: true },
-    }),
-  ]);
-
+function slotsForRule(
+  date: string,
+  rule: { enabled: boolean; startTime: string; endTime: string; slotDuration: number } | null,
+  blocked: boolean,
+  occupied: Set<string>,
+): string[] {
   if (!rule?.enabled || blocked) return [];
   if (
     !isValidAvailabilityTime(rule.startTime) ||
@@ -74,16 +67,91 @@ export async function getAvailableSlots(date: string): Promise<string[]> {
   const end = toMinutes(rule.endTime);
   if (start >= end) return [];
 
-  const occupied = new Set(bookings.map((booking) => booking.time));
   const now = londonNow();
   const slots: string[] = [];
-
   for (let current = start; current + rule.slotDuration <= end; current += rule.slotDuration) {
     const time = toTime(current);
     if (occupied.has(time)) continue;
     if (date === now.date && current <= now.minutes + 30) continue;
     slots.push(time);
   }
-
   return slots;
+}
+
+export async function getAvailableSlots(date: string): Promise<string[]> {
+  if (!isValidAvailabilityDate(date)) return [];
+
+  const dayOfWeek = new Date(`${date}T12:00:00Z`).getUTCDay();
+  const [rule, blocked, bookings] = await Promise.all([
+    db.availabilityDay.findUnique({ where: { dayOfWeek } }),
+    db.blockedDate.findUnique({ where: { date } }),
+    db.booking.findMany({
+      where: { date, status: { in: ['PENDING', 'CONFIRMED'] } },
+      select: { time: true },
+    }),
+  ]);
+
+  const occupied = new Set(bookings.map((booking) => booking.time));
+  return slotsForRule(date, rule, Boolean(blocked), occupied);
+}
+
+export async function getMonthAvailability(month: string): Promise<Record<string, number>> {
+  if (!/^\d{4}-\d{2}$/.test(month)) return {};
+
+  const first = `${month}-01`;
+  const firstDate = new Date(`${first}T12:00:00Z`);
+  if (Number.isNaN(firstDate.getTime()) || firstDate.toISOString().slice(0, 7) !== month) return {};
+
+  const now = londonNow().date;
+  const maximum = new Date(`${now}T12:00:00Z`);
+  maximum.setUTCDate(maximum.getUTCDate() + 180);
+  const maximumDate = maximum.toISOString().slice(0, 10);
+
+  const lastDateObject = new Date(firstDate);
+  lastDateObject.setUTCMonth(lastDateObject.getUTCMonth() + 1);
+  lastDateObject.setUTCDate(0);
+  const last = lastDateObject.toISOString().slice(0, 10);
+  if (last < now || first > maximumDate) return {};
+
+  const [rules, blockedDates, bookings] = await Promise.all([
+    db.availabilityDay.findMany(),
+    db.blockedDate.findMany({
+      where: { date: { gte: first, lte: last } },
+      select: { date: true },
+    }),
+    db.booking.findMany({
+      where: {
+        date: { gte: first, lte: last },
+        status: { in: ['PENDING', 'CONFIRMED'] },
+      },
+      select: { date: true, time: true },
+    }),
+  ]);
+
+  const rulesByDay = new Map(rules.map((rule) => [rule.dayOfWeek, rule]));
+  const blocked = new Set(blockedDates.map((entry) => entry.date));
+  const occupiedByDate = new Map<string, Set<string>>();
+  for (const booking of bookings) {
+    const occupied = occupiedByDate.get(booking.date) || new Set<string>();
+    occupied.add(booking.time);
+    occupiedByDate.set(booking.date, occupied);
+  }
+
+  const availability: Record<string, number> = {};
+  const cursor = new Date(firstDate);
+  while (cursor <= lastDateObject) {
+    const date = cursor.toISOString().slice(0, 10);
+    if (date >= now && date <= maximumDate) {
+      const rule = rulesByDay.get(cursor.getUTCDay()) || null;
+      availability[date] = slotsForRule(
+        date,
+        rule,
+        blocked.has(date),
+        occupiedByDate.get(date) || new Set(),
+      ).length;
+    }
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+
+  return availability;
 }
