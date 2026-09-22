@@ -21,6 +21,16 @@
   }
 }
 
+.booking-date-input {
+  color-scheme: dark;
+}
+
+.booking-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 2.5rem;
+  cursor: pointer;
+}
+
 @layer utilities {
   .section-kicker {
     @apply text-xs font-extrabold uppercase tracking-[0.2em] text-blue-700;

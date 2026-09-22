@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const BookingForm: React.FC = () => {
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     customerName: '',
     phone: '',
@@ -153,15 +154,33 @@ export const BookingForm: React.FC = () => {
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Select Date <span className="text-amber-400">*</span>
               </label>
-              <input
-                type="date"
-                required
-                min={new Date().toISOString().split('T')[0]}
-                max={new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value, time: '' })}
-                className="w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:outline-none"
-              />
+              <div className="relative">
+                <input
+                  ref={dateInputRef}
+                  type="date"
+                  required
+                  min={new Date().toISOString().split('T')[0]}
+                  max={new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value, time: '' })}
+                  className="booking-date-input w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl pl-4 pr-12 py-3 text-sm text-white focus:border-amber-500 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  aria-label="Open appointment date calendar"
+                  onClick={() => {
+                    const input = dateInputRef.current;
+                    if (input?.showPicker) input.showPicker();
+                    else {
+                      input?.focus();
+                      input?.click();
+                    }
+                  }}
+                  className="absolute inset-y-1 right-1 flex w-10 items-center justify-center rounded-lg bg-amber-400 text-slate-950 shadow-glow-gold transition-colors hover:bg-amber-300"
+                >
+                  <Calendar className="h-5 w-5" strokeWidth={2.5} />
+                </button>
+              </div>
             </div>
           </div>
 
