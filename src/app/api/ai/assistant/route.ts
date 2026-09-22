@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getVercelOidcToken } from '@vercel/oidc';
 import { verifyAdminAuth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
@@ -28,7 +29,14 @@ export async function POST(request: Request) {
     }
 
     const openAiKey = process.env.OPENAI_API_KEY;
-    const gatewayKey = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+    let gatewayKey = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+    if (!openAiKey && !gatewayKey && process.env.VERCEL) {
+      try {
+        gatewayKey = await getVercelOidcToken();
+      } catch (error) {
+        console.error('Unable to obtain Vercel OIDC token:', error);
+      }
+    }
     const apiKey = openAiKey || gatewayKey;
     if (!apiKey) {
       return NextResponse.json(
