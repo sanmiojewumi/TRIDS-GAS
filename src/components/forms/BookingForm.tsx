@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
-import { AppointmentCalendar } from './AppointmentCalendar';
 
 export const BookingForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -103,7 +102,7 @@ export const BookingForm: React.FC = () => {
             ONLINE APPOINTMENT BOOKING
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            Select from live future availability • Confirmation by phone or email
+            Select your preferred date & time slot • Instant booking confirmation
           </p>
         </div>
       </div>
@@ -132,7 +131,8 @@ export const BookingForm: React.FC = () => {
             </div>
           )}
 
-          <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Service <span className="text-amber-400">*</span>
               </label>
@@ -147,16 +147,22 @@ export const BookingForm: React.FC = () => {
                   </option>
                 ))}
               </select>
-          </div>
+            </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-              Select an Available Date <span className="text-amber-400">*</span>
-            </label>
-            <AppointmentCalendar
-              value={formData.date}
-              onChange={(date) => setFormData((current) => ({ ...current, date, time: '' }))}
-            />
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                Select Date <span className="text-amber-400">*</span>
+              </label>
+              <input
+                type="date"
+                required
+                min={new Date().toISOString().split('T')[0]}
+                max={new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value, time: '' })}
+                className="w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:outline-none"
+              />
+            </div>
           </div>
 
           {/* Time Slot Picker */}

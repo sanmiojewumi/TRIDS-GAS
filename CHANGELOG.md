@@ -3,7 +3,6 @@
 ## FAQs, availability and AI — 22 September 2026
 
 - Moved booking times from hardcoded buttons to live database availability.
-- Added a six-month visual calendar showing only future dates with open appointment slots.
 - Added admin weekly hours, appointment duration and blocked-date controls.
 - Added booking date, time and status editing plus booking removal.
 - Booking submissions now revalidate the requested slot server-side before saving.
