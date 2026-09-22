@@ -9,7 +9,7 @@
 - Seeded editable FAQ records and connected published FAQs to the public accordion.
 - Added a customer-facing TRIDS AI service and booking assistant with gas-emergency guardrails.
 - Added a private admin AI writing assistant for services, FAQs, articles and website copy.
-- AI uses Vercel AI Gateway with project OIDC in production, or `OPENAI_API_KEY` when supplied.
+- Customer guidance works without an API key; optional Gemini free-tier or OpenAI keys enable generative responses.
 
 ## Admin content management — 22 September 2026
 
