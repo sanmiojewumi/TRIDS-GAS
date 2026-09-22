@@ -315,7 +315,78 @@ async function main() {
     });
   }
 
-  console.log('Seed complete: admin users, settings, services, areas, slides and articles.');
+  const availability = [
+    { dayOfWeek: 0, enabled: false, startTime: '09:00', endTime: '13:00', slotDuration: 60 },
+    { dayOfWeek: 1, enabled: true, startTime: '08:00', endTime: '18:00', slotDuration: 90 },
+    { dayOfWeek: 2, enabled: true, startTime: '08:00', endTime: '18:00', slotDuration: 90 },
+    { dayOfWeek: 3, enabled: true, startTime: '08:00', endTime: '18:00', slotDuration: 90 },
+    { dayOfWeek: 4, enabled: true, startTime: '08:00', endTime: '18:00', slotDuration: 90 },
+    { dayOfWeek: 5, enabled: true, startTime: '08:00', endTime: '18:00', slotDuration: 90 },
+    { dayOfWeek: 6, enabled: true, startTime: '09:00', endTime: '13:00', slotDuration: 60 },
+  ];
+
+  for (const day of availability) {
+    await prisma.availabilityDay.upsert({
+      where: { dayOfWeek: day.dayOfWeek },
+      update: {},
+      create: day,
+    });
+  }
+
+  const faqs = [
+    {
+      id: 'faq-gas-safe',
+      question: 'How do I verify that TRIDS Gas & Plumbing is Gas Safe registered?',
+      answer: 'TRIDS Gas & Plumbing operates under Gas Safe Register number 979661. You can verify the registration on the official Gas Safe Register website and ask to inspect the engineer’s ID card on arrival.',
+      category: 'Gas Safety',
+      order: 1,
+    },
+    {
+      id: 'faq-areas',
+      question: 'Which areas do you cover?',
+      answer: 'We are based in Crewe and cover Cheshire, Warrington, Stockport, Greater Manchester, Stoke-on-Trent and locations within roughly a 50-mile radius.',
+      category: 'Coverage',
+      order: 2,
+    },
+    {
+      id: 'faq-service',
+      question: 'How often should a boiler be serviced?',
+      answer: 'A boiler should normally be serviced every 12 months to support safe operation, efficiency and manufacturer warranty requirements.',
+      category: 'Boilers',
+      order: 3,
+    },
+    {
+      id: 'faq-cp12',
+      question: 'What is included in a Landlord Gas Safety Check (CP12)?',
+      answer: 'The inspection covers gas appliances, flues, safety devices and relevant supply checks. A digital Landlord Gas Safety Record is issued after a satisfactory inspection.',
+      category: 'Landlords',
+      order: 4,
+    },
+    {
+      id: 'faq-emergency',
+      question: 'What should I do if I smell gas?',
+      answer: 'Do not use electrical switches or naked flames. Open windows if safe, turn off the gas at the meter, leave the property and call the National Gas Emergency Service on 0800 111 999.',
+      category: 'Emergency',
+      order: 5,
+    },
+    {
+      id: 'faq-booking',
+      question: 'How do online appointment requests work?',
+      answer: 'Choose an available date and time. Your request is held as pending until TRIDS confirms the appointment by phone or email.',
+      category: 'Bookings',
+      order: 6,
+    },
+  ];
+
+  for (const faq of faqs) {
+    await prisma.faqItem.upsert({
+      where: { id: faq.id },
+      update: {},
+      create: { ...faq, published: true },
+    });
+  }
+
+  console.log('Seed complete: admin, settings, content, FAQs and booking availability.');
 }
 
 main()

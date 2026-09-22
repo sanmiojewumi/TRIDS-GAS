@@ -6,6 +6,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MobileNav } from './MobileNav';
 import { DraggableWhatsApp } from '../common/DraggableWhatsApp';
+import { AiAssistant } from '../common/AiAssistant';
 import { SiteSettingsData } from '@/lib/settings';
 
 interface SiteChromeProps {
@@ -36,6 +37,7 @@ export const SiteChrome: React.FC<SiteChromeProps> = ({ settings, children }) =>
       <Footer settings={settings} />
       <MobileNav phone={settings.phone} />
       <DraggableWhatsApp phone={settings.phone} />
+      <AiAssistant />
     </>
   );
 };

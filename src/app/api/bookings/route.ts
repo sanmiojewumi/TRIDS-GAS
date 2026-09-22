@@ -9,6 +9,7 @@ import {
   isValidPhone,
   isValidPostcode,
 } from '@/lib/security';
+import { getAvailableSlots } from '@/lib/availability';
 
 export async function POST(req: Request) {
   const limit = checkRateLimit(req, 'booking', { windowMs: 60 * 60 * 1000, max: 3 });
@@ -52,7 +53,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Please select a future appointment' }, { status: 400 });
     }
 
-    // Check double booking
+    const availableSlots = await getAvailableSlots(date);
+    if (!availableSlots.includes(time)) {
+      return NextResponse.json(
+        { error: 'That appointment is no longer available. Please select another time.' },
+        { status: 409 },
+      );
+    }
+
+    // Check double booking again immediately before creation.
     const existing = await db.booking.findFirst({
       where: {
         date,

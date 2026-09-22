@@ -101,6 +101,24 @@ model Booking {
   updatedAt    DateTime @updatedAt
 }
 
+model AvailabilityDay {
+  id           String   @id @default(uuid())
+  dayOfWeek    Int      @unique
+  enabled      Boolean  @default(true)
+  startTime    String   @default("08:00")
+  endTime      String   @default("18:00")
+  slotDuration Int      @default(60)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model BlockedDate {
+  id        String   @id @default(uuid())
+  date      String   @unique
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
 model Project {
   id          String   @id @default(uuid())
   title       String

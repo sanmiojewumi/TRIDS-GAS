@@ -1,5 +1,16 @@
 # TRIDS Gas & Plumbing changelog
 
+## FAQs, availability and AI — 22 September 2026
+
+- Moved booking times from hardcoded buttons to live database availability.
+- Added admin weekly hours, appointment duration and blocked-date controls.
+- Added booking date, time and status editing plus booking removal.
+- Booking submissions now revalidate the requested slot server-side before saving.
+- Seeded editable FAQ records and connected published FAQs to the public accordion.
+- Added a customer-facing TRIDS AI service and booking assistant with gas-emergency guardrails.
+- Added a private admin AI writing assistant for services, FAQs, articles and website copy.
+- AI uses Vercel AI Gateway with project OIDC in production, or `OPENAI_API_KEY` when supplied.
+
 ## Admin content management — 22 September 2026
 
 - Added full create, edit, publish/hide and delete controls for project case studies.

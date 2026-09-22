@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const BookingForm: React.FC = () => {
@@ -11,13 +11,15 @@ export const BookingForm: React.FC = () => {
     postcode: '',
     service: 'Boiler Servicing',
     date: '',
-    time: '09:00',
+    time: '',
     notes: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
   const servicesList = [
     'Boiler Servicing',
@@ -30,7 +32,39 @@ export const BookingForm: React.FC = () => {
     'Radiator & Valve Upgrades',
   ];
 
-  const timeSlots = ['08:00', '09:30', '11:00', '13:00', '14:30', '16:00'];
+  useEffect(() => {
+    if (!formData.date) {
+      setTimeSlots([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    setLoadingSlots(true);
+    setError('');
+    fetch(`/api/availability?date=${encodeURIComponent(formData.date)}`, {
+      signal: controller.signal,
+      cache: 'no-store',
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not load appointment times');
+        const slots = Array.isArray(data.slots) ? data.slots : [];
+        setTimeSlots(slots);
+        setFormData((current) => ({
+          ...current,
+          time: slots.includes(current.time) ? current.time : '',
+        }));
+      })
+      .catch((requestError) => {
+        if (requestError.name !== 'AbortError') {
+          setTimeSlots([]);
+          setError(requestError.message || 'Could not load appointment times');
+        }
+      })
+      .finally(() => setLoadingSlots(false));
+
+    return () => controller.abort();
+  }, [formData.date]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,8 +157,9 @@ export const BookingForm: React.FC = () => {
                 type="date"
                 required
                 min={new Date().toISOString().split('T')[0]}
+                max={new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
                 value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value, time: '' })}
                 className="w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 focus:outline-none"
               />
             </div>
@@ -135,8 +170,21 @@ export const BookingForm: React.FC = () => {
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
               Available Time Slot <span className="text-amber-400">*</span>
             </label>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {timeSlots.map((slot) => (
+            {!formData.date ? (
+              <p className="rounded-xl border border-slate-700 bg-slate-950 p-4 text-sm text-slate-400">
+                Select a date to see available appointment times.
+              </p>
+            ) : loadingSlots ? (
+              <p className="rounded-xl border border-slate-700 bg-slate-950 p-4 text-sm text-slate-400">
+                Checking live availability…
+              </p>
+            ) : timeSlots.length === 0 ? (
+              <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
+                No appointment times are available on this date. Please choose another day.
+              </p>
+            ) : (
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {timeSlots.map((slot) => (
                 <button
                   type="button"
                   key={slot}
@@ -149,8 +197,9 @@ export const BookingForm: React.FC = () => {
                 >
                   {slot}
                 </button>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -228,7 +277,7 @@ export const BookingForm: React.FC = () => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !formData.time}
             className="w-full py-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-base transition-all shadow-glow-gold flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? <span>Sending Booking Request...</span> : <span>REQUEST APPOINTMENT</span>}

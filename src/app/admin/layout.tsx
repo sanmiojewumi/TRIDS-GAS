@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Inbox,
   CalendarDays,
+  CalendarClock,
   Wrench,
   FolderKanban,
   Star,
@@ -17,6 +18,7 @@ import {
   MapPinned,
   Newspaper,
   CircleHelp,
+  Sparkles,
 } from 'lucide-react';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -29,7 +31,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
       {/* Admin Sidebar Navigation */}
-      <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 p-6 flex flex-col justify-between shrink-0">
+      <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 p-6 flex flex-col justify-between shrink-0 md:sticky md:top-0 md:h-screen overflow-y-auto">
         <div className="space-y-6">
           <div className="pb-4 border-b border-slate-800">
             <TRIDSLogo size="sm" />
@@ -58,6 +60,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
             >
               <CalendarDays className="w-4 h-4 text-amber-500" /> Booking Calendar
+            </Link>
+
+            <Link
+              href="/admin/availability"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
+            >
+              <CalendarClock className="w-4 h-4 text-amber-500" /> Availability & Hours
             </Link>
 
             <Link
@@ -93,6 +102,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
             >
               <CircleHelp className="w-4 h-4 text-amber-500" /> FAQs
+            </Link>
+
+            <Link
+              href="/admin/ai-assistant"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-amber-400 transition-colors"
+            >
+              <Sparkles className="w-4 h-4 text-amber-500" /> AI Writing Assistant
             </Link>
 
             <Link
