@@ -49,7 +49,13 @@ export default function AdminBookingsPage() {
       setError(data.error || 'Could not update booking');
       return;
     }
-    setMessage(`Booking for ${booking.customerName} updated.`);
+    const confirmationNote =
+      booking.status === 'CONFIRMED'
+        ? data.customerEmailSent
+          ? ' Confirmation email sent to the customer.'
+          : ' Confirmation email could not be sent. Check SMTP settings.'
+        : '';
+    setMessage(`Booking for ${booking.customerName} updated.${confirmationNote}`);
     await load();
   };
 
@@ -67,7 +73,9 @@ export default function AdminBookingsPage() {
       <div className="flex items-center justify-between border-b border-slate-800 pb-5">
         <div>
           <h1 className="text-3xl font-extrabold text-white font-heading">BOOKING CALENDAR & SCHEDULE</h1>
-          <p className="text-xs text-slate-400 font-mono mt-1">Edit appointment dates, times and booking status.</p>
+          <p className="text-xs text-slate-400 font-mono mt-1">
+            Edit appointment dates, times and booking status. Confirming a booking emails the customer.
+          </p>
         </div>
         <div className="text-xs font-mono bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800 text-slate-300">
           Bookings Total: {bookings.length}

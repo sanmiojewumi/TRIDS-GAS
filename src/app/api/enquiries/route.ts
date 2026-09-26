@@ -40,6 +40,35 @@ export async function POST(req: Request) {
     if (!isValidEmail(email) || !isValidPhone(phone) || !isValidPostcode(postcode)) {
       return NextResponse.json({ error: 'Please enter valid contact details' }, { status: 400 });
     }
+    if (preferredDate) {
+      const selectedDate = new Date(`${preferredDate}T12:00:00Z`);
+      const today = new Date();
+      const todayKey = today.toISOString().slice(0, 10);
+      const maximum = new Date(`${todayKey}T12:00:00Z`);
+      maximum.setUTCDate(maximum.getUTCDate() + 180);
+      if (
+        !/^\d{4}-\d{2}-\d{2}$/.test(preferredDate) ||
+        Number.isNaN(selectedDate.getTime()) ||
+        selectedDate.toISOString().slice(0, 10) !== preferredDate ||
+        preferredDate < todayKey ||
+        selectedDate > maximum
+      ) {
+        return NextResponse.json(
+          { error: 'Please select a preferred date within the next 180 days' },
+          { status: 400 },
+        );
+      }
+    }
+    if (
+      preferredTime &&
+      ![
+        'Morning (08:00 - 12:00)',
+        'Afternoon (12:00 - 16:00)',
+        'Evening / Flexible',
+      ].includes(preferredTime)
+    ) {
+      return NextResponse.json({ error: 'Please select a valid preferred time' }, { status: 400 });
+    }
 
     const enquiry = await db.enquiry.create({
       data: {

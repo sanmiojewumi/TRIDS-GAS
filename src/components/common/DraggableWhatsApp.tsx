@@ -23,7 +23,7 @@ export const DraggableWhatsApp: React.FC<WhatsAppProps> = ({
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.95 }}
       initial={{ x: 0, y: 0 }}
-      className="fixed bottom-20 right-4 z-50 hidden cursor-grab select-none active:cursor-grabbing sm:block lg:bottom-8 lg:right-8"
+      className="fixed bottom-8 right-8 z-50 hidden cursor-grab select-none active:cursor-grabbing lg:block"
     >
       <div className="relative group">
         
@@ -38,7 +38,8 @@ export const DraggableWhatsApp: React.FC<WhatsAppProps> = ({
           target="_blank"
           rel="noopener noreferrer"
           className="w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white flex items-center justify-center shadow-[0_0_30px_rgba(37,211,102,0.6)] border-2 border-white/80 transition-all relative"
-          title="Chat with TRIDS Gas & Plumbing on WhatsApp (07311038572)"
+          title={`Chat with TRIDS Gas & Plumbing on WhatsApp (${phone})`}
+          aria-label={`Chat with TRIDS Gas & Plumbing on WhatsApp at ${phone}`}
         >
           {/* Pulse ring */}
           <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />

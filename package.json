@@ -7,7 +7,8 @@
     "build": "npx prisma generate && next build",
     "vercel-build": "node scripts/vercel-build.mjs",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "npm run typecheck",
+    "typecheck": "tsc --noEmit",
     "db:push": "npx prisma db push",
     "db:seed": "npx tsx prisma/seed.ts",
     "postinstall": "npx prisma generate"

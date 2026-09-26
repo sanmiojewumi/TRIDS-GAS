@@ -29,7 +29,7 @@ export const HeroSection: React.FC<HeroProps> = ({ settings }) => {
               AVAILABLE TODAY IN CREWE & CHESHIRE
             </span>
             <span className="hidden md:inline text-slate-300 font-medium">
-              Average 30-Min Emergency Arrival • Landlord CP12 Safety Certificates
+              Gas Safe boiler, heating and plumbing cover across Crewe and Cheshire
             </span>
           </div>
 
@@ -51,7 +51,7 @@ export const HeroSection: React.FC<HeroProps> = ({ settings }) => {
             {/* Top Badges */}
             <div className="flex flex-wrap items-center gap-2.5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-red-400 text-xs font-bold uppercase tracking-wider shadow-glow-red animate-pulse">
-                <ShieldAlert className="w-4 h-4 text-red-400" /> 24/7 Emergency Gas Response
+                <ShieldAlert className="w-4 h-4 text-red-400" /> Gas Emergency Advice: 0800 111 999
               </div>
 
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0F1C3F]/90 border border-blue-500/40 text-slate-200 text-xs font-semibold shadow-lg">
@@ -111,7 +111,7 @@ export const HeroSection: React.FC<HeroProps> = ({ settings }) => {
               </div>
               <div className="p-2.5 rounded-xl bg-[#0F1C3F]/60 border border-[#1E3A8A] flex items-center gap-2">
                 <Zap className="w-4 h-4 text-sky-400 shrink-0" />
-                <span>30-Min Fast Response</span>
+                <span>Crewe & Cheshire Cover</span>
               </div>
               <div className="p-2.5 rounded-xl bg-[#0F1C3F]/60 border border-[#1E3A8A] flex items-center gap-2">
                 <Wrench className="w-4 h-4 text-red-400 shrink-0" />

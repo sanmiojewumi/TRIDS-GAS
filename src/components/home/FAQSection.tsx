@@ -13,9 +13,14 @@ export interface FAQItem {
 interface FAQSectionProps {
   faqs?: FAQItem[];
   phone?: string;
+  gasSafeNumber?: string;
 }
 
-export const FAQSection: React.FC<FAQSectionProps> = ({ faqs = [], phone = '07311038572' }) => {
+export const FAQSection: React.FC<FAQSectionProps> = ({
+  faqs = [],
+  phone = '07311038572',
+  gasSafeNumber = '979661',
+}) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const defaultFaqs: FAQItem[] = [
@@ -95,13 +100,16 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs = [], phone = '0731
             const isOpen = openIndex === index;
             return (
               <div
-                key={index}
+                key={faq.question}
                 className="glass-card rounded-2xl border border-[#1E3A8A] overflow-hidden transition-all duration-200 hover:border-amber-400/50 bg-[#0F1C3F]/80 shadow-lg"
               >
                 <button
+                  type="button"
+                  id={`faq-question-${index}`}
                   onClick={() => toggleFAQ(index)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none"
+                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-400"
                   aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${index}`}
                 >
                   <div className="flex items-center gap-3">
                     <span className="w-8 h-8 rounded-xl bg-[#070D1E] border border-[#1E3A8A] flex items-center justify-center text-yellow-400 text-xs font-mono font-bold shrink-0">
@@ -118,12 +126,17 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs = [], phone = '0731
 
                 {isOpen && (
                   <div className="px-5 pb-6 sm:px-6 sm:pb-6 pt-0 border-t border-[#1E3A8A]/50 animate-in fade-in duration-200">
-                    <p className="text-slate-300 text-sm sm:text-base leading-relaxed pl-11 pt-4">
+                    <p
+                      id={`faq-answer-${index}`}
+                      role="region"
+                      aria-labelledby={`faq-question-${index}`}
+                      className="text-slate-300 text-sm sm:text-base leading-relaxed sm:pl-11 pt-4"
+                    >
                       {faq.answer}
                     </p>
-                    <div className="mt-4 pl-11 flex items-center gap-4 text-xs font-mono">
+                    <div className="mt-4 flex flex-col items-start gap-3 text-xs font-mono sm:flex-row sm:items-center sm:gap-4 sm:pl-11">
                       <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
-                        Gas Safe Verified (979661)
+                        Gas Safe Registered ({gasSafeNumber})
                       </span>
                       <Link href="/contact" className="text-amber-400 hover:underline flex items-center gap-1">
                         Have more questions? Contact Us <ArrowRight className="w-3 h-3" />
@@ -138,7 +151,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs = [], phone = '0731
 
         {/* Bottom Contact Help Card */}
         <div className="mt-12 p-6 rounded-3xl bg-[#070D1E] border border-[#1E3A8A] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-col items-stretch gap-3 min-[420px]:w-auto min-[420px]:flex-row min-[420px]:items-center">
             <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-yellow-400 flex items-center justify-center font-bold shrink-0">
               <MessageSquare className="w-6 h-6 text-yellow-400" />
             </div>

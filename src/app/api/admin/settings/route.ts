@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { verifyAdminAuth } from '@/lib/auth';
-import { cleanText, isValidEmail, isValidPhone } from '@/lib/security';
+import { cleanText, isPublicHttpsUrl, isValidEmail, isValidPhone } from '@/lib/security';
 
 export async function PUT(req: Request) {
   const isAuth = await verifyAdminAuth();
@@ -28,6 +28,12 @@ export async function PUT(req: Request) {
       openingHours: cleanText(body.openingHours, 250),
       address: cleanText(body.address, 500),
       googleReviewsUrl: cleanText(body.googleReviewsUrl, 500),
+      facebookUrl: cleanText(body.facebookUrl, 500),
+      instagramUrl: cleanText(body.instagramUrl, 500),
+      tiktokUrl: cleanText(body.tiktokUrl, 500),
+      linkedinUrl: cleanText(body.linkedinUrl, 500),
+      youtubeUrl: cleanText(body.youtubeUrl, 500),
+      xUrl: cleanText(body.xUrl, 500),
     };
 
     if (
@@ -39,12 +45,19 @@ export async function PUT(req: Request) {
     ) {
       return NextResponse.json({ error: 'Valid company contact details are required' }, { status: 400 });
     }
-    if (data.googleReviewsUrl && data.googleReviewsUrl !== '#') {
-      try {
-        const url = new URL(data.googleReviewsUrl);
-        if (url.protocol !== 'https:') throw new Error('HTTPS required');
-      } catch {
-        return NextResponse.json({ error: 'Google Reviews URL must be a valid HTTPS URL' }, { status: 400 });
+    const optionalHttpsFields = [
+      ['Google Reviews URL', data.googleReviewsUrl],
+      ['Facebook URL', data.facebookUrl],
+      ['Instagram URL', data.instagramUrl],
+      ['TikTok URL', data.tiktokUrl],
+      ['LinkedIn URL', data.linkedinUrl],
+      ['YouTube URL', data.youtubeUrl],
+      ['X URL', data.xUrl],
+    ] as const;
+
+    for (const [label, value] of optionalHttpsFields) {
+      if (value && value !== '#' && !isPublicHttpsUrl(value)) {
+        return NextResponse.json({ error: `${label} must be a valid HTTPS URL or left blank` }, { status: 400 });
       }
     }
 

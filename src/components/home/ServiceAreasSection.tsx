@@ -28,7 +28,7 @@ export const ServiceAreasSection: React.FC<ServiceAreasProps> = ({
             Local Coverage & Fast Response
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-heading">
-            SERVING CHESHIRE, MANCHESTER & 50-MILE RADIUS
+            CREWE, CHESHIRE AND TOWNS WITHIN 30 MILES
           </h2>
           <p className="text-slate-300 text-base sm:text-lg">
             TRIDS Gas & Plumbing provides prompt domestic gas, boiler servicing, and plumbing solutions throughout the following local areas.

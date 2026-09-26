@@ -187,6 +187,66 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings }) =
         </div>
       </div>
 
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold text-white font-heading border-b border-slate-800 pb-2">
+          4. Reviews, Hours & Social Accounts
+        </h2>
+        <p className="text-xs text-slate-400">
+          Social icons only appear on the site when you add a real HTTPS profile URL. Leave a field blank if you do not have that account.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Opening Hours</label>
+            <input
+              type="text"
+              value={formData.openingHours}
+              onChange={(e) => setFormData({ ...formData, openingHours: e.target.value })}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Google Reviews URL</label>
+            <input
+              type="url"
+              value={formData.googleReviewsUrl === '#' ? '' : formData.googleReviewsUrl}
+              onChange={(e) => setFormData({ ...formData, googleReviewsUrl: e.target.value })}
+              placeholder="https://g.page/r/..."
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-amber-500 font-mono"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Address / Coverage Line</label>
+          <input
+            type="text"
+            value={formData.address}
+            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            ['facebookUrl', 'Facebook URL'],
+            ['instagramUrl', 'Instagram URL'],
+            ['tiktokUrl', 'TikTok URL'],
+            ['linkedinUrl', 'LinkedIn URL'],
+            ['youtubeUrl', 'YouTube URL'],
+            ['xUrl', 'X URL'],
+          ].map(([key, label]) => (
+            <div key={key}>
+              <label className="block text-xs font-bold uppercase text-slate-300 mb-1">{label}</label>
+              <input
+                type="url"
+                value={formData[key as keyof SiteSettingsData] as string}
+                onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                placeholder="https://"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-amber-500 font-mono"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <button
         type="submit"
         disabled={saving}

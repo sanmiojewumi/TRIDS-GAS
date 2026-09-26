@@ -90,3 +90,12 @@ export function isSafeMediaUrl(value: string): boolean {
     return false;
   }
 }
+
+export function isPublicHttpsUrl(value?: string | null): value is string {
+  if (!value || value === '#') return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}

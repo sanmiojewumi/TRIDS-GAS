@@ -31,13 +31,14 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
     service: 'Boiler Servicing',
     rating: 5,
     review: '',
+    website: '',
   });
 
   const hasGoogleReviews = Boolean(googleReviewsUrl && googleReviewsUrl !== '#');
   const averageRating =
     testimonials.length > 0
       ? (testimonials.reduce((sum, t) => sum + (t.rating || 0), 0) / testimonials.length).toFixed(1)
-      : '5.0';
+      : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +59,7 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
       setTimeout(() => {
         setShowReviewModal(false);
         setSubmitted(false);
-        setFormData({ customerName: '', service: 'Boiler Servicing', rating: 5, review: '' });
+        setFormData({ customerName: '', service: 'Boiler Servicing', rating: 5, review: '', website: '' });
       }, 2500);
     } catch (err: any) {
       setSubmitError(err.message || 'Could not submit review. Please try again.');
@@ -75,20 +76,26 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-widest mb-2">
-              <ShieldCheck className="w-3.5 h-3.5" /> Verified Customer Feedback
+              <ShieldCheck className="w-3.5 h-3.5" /> Customer Reviews
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-heading">
               WHAT OUR CUSTOMERS SAY
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             {/* Google Reviews Badge */}
             <div className="bg-[#0F1C3F] border border-[#1E3A8A] p-3 rounded-2xl flex items-center gap-3">
-              <div className="flex text-amber-400 text-sm font-bold">★★★★★</div>
+              {averageRating && <div className="flex text-amber-400 text-sm font-bold">★★★★★</div>}
               <div className="text-xs text-slate-300 font-medium">
-                <span className="text-white font-bold">{averageRating} Star</span>{' '}
-                {testimonials.length > 0 ? `from ${testimonials.length} reviews` : 'Local gas & plumbing'}
+                {averageRating ? (
+                  <>
+                    <span className="text-white font-bold">{averageRating} Star</span>{' '}
+                    from {testimonials.length} reviews
+                  </>
+                ) : (
+                  <span className="text-white font-bold">Customer feedback</span>
+                )}
               </div>
             </div>
             {hasGoogleReviews && (
@@ -127,7 +134,7 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
               <div>
                 {/* Stars */}
                 <div className="flex items-center gap-1 mb-3">
-                  {[...Array(t.rating)].map((_, i) => (
+                  {Array.from({ length: Math.min(5, Math.max(0, t.rating)) }).map((_, i) => (
                     <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
                   ))}
                 </div>
@@ -138,9 +145,8 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
               </div>
 
               <div className="pt-4 border-t border-[#1E3A8A]/60">
-                <div className="text-sm font-bold text-white flex items-center justify-between">
+                <div className="text-sm font-bold text-white">
                   <span>{t.customerName}</span>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div className="text-xs text-amber-400 font-mono mt-0.5">{t.service}</div>
                 <div className="text-[10px] text-slate-400 font-mono mt-1">{t.date}</div>
@@ -152,15 +158,17 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
         {/* Review Modal */}
         {showReviewModal && (
           <div className="fixed inset-0 z-50 bg-[#070D1E]/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="bg-[#0F1C3F] border border-[#1E3A8A] rounded-3xl p-6 max-w-md w-full relative shadow-2xl">
+            <div role="dialog" aria-modal="true" aria-labelledby="review-dialog-title" className="bg-[#0F1C3F] border border-[#1E3A8A] rounded-3xl p-6 max-w-md w-full relative shadow-2xl">
               <button
+                type="button"
                 onClick={() => setShowReviewModal(false)}
+                aria-label="Close review form"
                 className="absolute top-4 right-4 text-slate-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <h3 className="text-xl font-bold text-white mb-2 font-heading">Submit a Customer Review</h3>
+              <h3 id="review-dialog-title" className="text-xl font-bold text-white mb-2 font-heading">Submit a Customer Review</h3>
               <p className="text-slate-300 text-xs mb-4">Share your feedback about TRIDS Gas & Plumbing.</p>
 
               {submitted ? (
@@ -172,10 +180,13 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Your Name</label>
+                    <label htmlFor="review-name" className="block text-xs font-semibold text-slate-300 mb-1">Your Name</label>
                     <input
+                      id="review-name"
                       type="text"
                       required
+                      autoComplete="name"
+                      maxLength={100}
                       value={formData.customerName}
                       onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
                       placeholder="e.g. Sarah Jenkins"
@@ -184,8 +195,9 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Service Received</label>
+                    <label htmlFor="review-service" className="block text-xs font-semibold text-slate-300 mb-1">Service Received</label>
                     <select
+                      id="review-service"
                       value={formData.service}
                       onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                       className="w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl px-3 py-2 text-xs text-white focus:border-amber-500 outline-none"
@@ -199,13 +211,16 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Rating</label>
-                    <div className="flex items-center gap-2">
+                    <span id="review-rating-label" className="block text-xs font-semibold text-slate-300 mb-1">Rating</span>
+                    <div className="flex items-center gap-2" role="radiogroup" aria-labelledby="review-rating-label">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
                           type="button"
                           onClick={() => setFormData({ ...formData, rating: star })}
+                          role="radio"
+                          aria-checked={formData.rating === star}
+                          aria-label={`${star} star${star === 1 ? '' : 's'}`}
                           className="p-1 text-amber-400"
                         >
                           <Star className={`w-6 h-6 ${star <= formData.rating ? 'fill-amber-400' : ''}`} />
@@ -215,10 +230,12 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Your Review</label>
+                    <label htmlFor="review-text" className="block text-xs font-semibold text-slate-300 mb-1">Your Review</label>
                     <textarea
+                      id="review-text"
                       required
                       rows={3}
+                      maxLength={2000}
                       value={formData.review}
                       onChange={(e) => setFormData({ ...formData, review: e.target.value })}
                       placeholder="Describe your experience..."
@@ -227,10 +244,22 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
                   </div>
 
                   {submitError && (
-                    <p className="text-xs text-red-400 bg-red-950/50 p-2.5 rounded-lg border border-red-500/40">
+                    <p role="alert" className="text-xs text-red-400 bg-red-950/50 p-2.5 rounded-lg border border-red-500/40">
                       {submitError}
                     </p>
                   )}
+                  <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+                    <label htmlFor="review-website">Website</label>
+                    <input
+                      id="review-website"
+                      name="website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={formData.website}
+                      onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    />
+                  </div>
                   <button
                     type="submit"
                     disabled={submitting}

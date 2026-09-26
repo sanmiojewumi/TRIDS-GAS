@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { TRIDSLogo } from '../common/TRIDSLogo';
+import { SocialLinks } from '../common/SocialLinks';
 import { Phone, ShieldCheck, Menu, X, Calendar } from 'lucide-react';
 import { SiteSettingsData } from '@/lib/settings';
 
@@ -29,8 +30,13 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    };
+    if (mobileMenuOpen) document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [mobileMenuOpen]);
 
@@ -61,6 +67,7 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
           </div>
 
           <div className="flex items-center gap-4 text-slate-300">
+            <SocialLinks settings={settings} compact className="hidden xl:flex" />
             <span className="hidden md:inline font-mono">{settings.openingHours}</span>
             <a
               href={`tel:${settings.phone}`}
@@ -85,10 +92,10 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
             <TRIDSLogo size="lg" />
             <Link
               href="/"
-              className="min-w-0 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="min-w-0 overflow-hidden rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               aria-label="TRIDS Gas & Plumbing home"
             >
-              <span className="header-brand-3d block whitespace-nowrap font-heading text-[clamp(0.7rem,2.15vw,1.3rem)] font-extrabold uppercase tracking-[0.055em]">
+              <span className="header-brand-3d block truncate whitespace-nowrap font-heading text-[clamp(0.7rem,2.15vw,1.3rem)] font-extrabold uppercase tracking-[0.055em] max-[359px]:hidden">
                 TRIDS GAS &amp; PLUMBING
               </span>
             </Link>
@@ -101,6 +108,7 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
                 <Link
                   key={link.name}
                   href={link.href}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`px-3.5 py-2 rounded-lg text-sm font-semibold tracking-wide transition-colors ${
                     isActive
                       ? 'text-amber-400 bg-[#0F1C3F]'
@@ -131,6 +139,7 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
             </a>
 
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2.5 rounded-xl text-slate-200 hover:text-amber-400 hover:bg-[#0F1C3F] border border-[#1E3A8A] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               aria-expanded={mobileMenuOpen}
@@ -164,6 +173,7 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
                 <Link
                   key={link.name}
                   href={link.href}
+                  aria-current={pathname === link.href ? 'page' : undefined}
                   className={`block px-4 py-3 rounded-xl text-sm font-bold text-center transition-colors ${
                     pathname === link.href
                       ? 'bg-amber-500 text-slate-950'

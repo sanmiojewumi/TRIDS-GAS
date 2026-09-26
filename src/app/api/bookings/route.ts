@@ -9,7 +9,7 @@ import {
   isValidPhone,
   isValidPostcode,
 } from '@/lib/security';
-import { getAvailableSlots } from '@/lib/availability';
+import { getAvailableSlots, isFutureLondonAppointment } from '@/lib/availability';
 
 export async function POST(req: Request) {
   const limit = checkRateLimit(req, 'booking', { windowMs: 60 * 60 * 1000, max: 3 });
@@ -48,8 +48,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Please enter valid booking details' }, { status: 400 });
     }
 
-    const selectedDate = new Date(`${date}T${time}:00`);
-    if (Number.isNaN(selectedDate.getTime()) || selectedDate.getTime() < Date.now()) {
+    if (!isFutureLondonAppointment(date, time)) {
       return NextResponse.json({ error: 'Please select a future appointment' }, { status: 400 });
     }
 

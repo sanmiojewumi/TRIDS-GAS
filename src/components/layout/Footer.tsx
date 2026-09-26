@@ -1,8 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { TRIDSLogo } from '../common/TRIDSLogo';
+import { SocialLinks } from '../common/SocialLinks';
 import { ShieldCheck, Phone, Mail, MapPin } from 'lucide-react';
 import { SiteSettingsData } from '@/lib/settings';
+import { coverageTowns } from '@/lib/coverage';
 
 interface FooterProps {
   settings: SiteSettingsData;
@@ -18,20 +20,10 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
     ['General Plumbing', '/services/general-plumbing'],
   ];
 
-  const areaLinks = [
-    ['Crewe', '/areas/crewe'],
-    ['Winsford', '/areas/winsford'],
-    ['Sandbach', '/areas/sandbach'],
-    ['Nantwich', '/areas/nantwich'],
-    ['Congleton', '/areas/congleton'],
-    ['Manchester', '/areas/manchester'],
-    ['Stoke-on-Trent', '/areas/stoke-on-trent'],
-    ['Warrington', '/areas/warrington'],
-    ['Stockport', '/areas/stockport'],
-  ];
+  const areaLinks = coverageTowns.slice(0, 10).map((town) => [town.name, `/areas/${town.slug}`]);
 
   return (
-    <footer className="relative overflow-hidden border-t border-slate-800 bg-[#050a14] text-slate-400">
+    <footer className="relative overflow-hidden border-t border-slate-800 bg-[#050a14] pb-16 text-slate-400 lg:pb-0">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/70 to-transparent" />
       <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
@@ -39,9 +31,10 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
             <TRIDSLogo size="lg" />
             <p className="text-sm font-semibold text-amber-400">{settings.tagline}</p>
             <p className="max-w-sm text-sm leading-6 text-slate-300">
-              Professional domestic gas, heating and plumbing services based in Crewe and
-              serving the existing TRIDS coverage area.
+              Gas Safe boiler, heating and plumbing from Crewe across Cheshire, towns within
+              30 miles, and the extra areas TRIDS already covers.
             </p>
+            <SocialLinks settings={settings} />
             <div className="inline-flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-slate-200">
               <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-400" />
               <div>

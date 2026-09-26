@@ -47,6 +47,13 @@ export function isValidAvailabilityTime(time: string): boolean {
   return minutes >= 0 && minutes < 24 * 60;
 }
 
+export function isFutureLondonAppointment(date: string, time: string): boolean {
+  if (!isValidAvailabilityDate(date) || !isValidAvailabilityTime(time)) return false;
+  const now = londonNow();
+  if (date > now.date) return true;
+  return date === now.date && toMinutes(time) > now.minutes;
+}
+
 export async function getAvailableSlots(date: string): Promise<string[]> {
   if (!isValidAvailabilityDate(date)) return [];
 

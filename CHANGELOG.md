@@ -1,5 +1,28 @@
 # TRIDS Gas & Plumbing changelog
 
+## Customer appointment confirmation emails — 26 September 2026
+
+- Customers now receive a confirmation email when an admin confirms or reschedules a confirmed appointment.
+- The admin bookings screen reports whether that customer email was sent.
+
+## Functionality and UX tidy-up — 26 September 2026
+
+- Fixed Next.js 16 query-parameter handling on quote pages and added service prefill to booking links.
+- Added future-date constraints and matching server validation to quote preferences.
+- Improved booking and quote form autocomplete, input limits, live status announcements and repeat submissions.
+- Made the header safer at very narrow mobile widths, added active-page semantics and Escape-key menu closing.
+- Prevented the sticky mobile action bar from covering footer links.
+- Improved FAQ keyboard focus, accordion relationships and small-screen action layout.
+- Made the Gas Safe number in quote and FAQ interfaces follow admin-configured settings.
+- Added functional enquiry pipeline status changes and removal controls in the admin portal.
+- Fixed admin logout so it returns to the login page instead of displaying JSON.
+- Aligned booking future-time checks with Europe/London and added FAQ sitemap coverage.
+- Removed mobile floating-action collisions and eliminated the empty-review 5.0 rating claim.
+- Associated public form labels with controls, exposed selected states and added working honeypots.
+- Upgraded the virtual assistant into a once-per-session popup with quick questions, keyboard dismissal, a faded logo watermark and subtle red/green brand accents.
+- Replaced the obsolete Next.js lint command with a working TypeScript check.
+- Updated local setup, testing instructions and the manual smoke-test checklist.
+
 ## FAQs, availability and AI — 22 September 2026
 
 - Moved booking times from hardcoded buttons to live database availability.

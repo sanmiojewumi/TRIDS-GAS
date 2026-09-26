@@ -6,11 +6,13 @@ import { Send, CheckCircle2, ShieldCheck, MessageCircle, AlertCircle } from 'luc
 interface QuoteFormProps {
   initialService?: string;
   initialMessage?: string;
+  gasSafeNumber?: string;
 }
 
 export const QuoteForm: React.FC<QuoteFormProps> = ({
   initialService = 'Boiler Servicing',
   initialMessage = '',
+  gasSafeNumber = '979661',
 }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -21,6 +23,7 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
     message: initialMessage,
     preferredDate: '',
     preferredTime: 'Morning (08:00 - 12:00)',
+    website: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -73,6 +76,7 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
         message: initialMessage,
         preferredDate: '',
         preferredTime: 'Morning (08:00 - 12:00)',
+        website: '',
       });
     } catch (err: any) {
       setError(err.message || 'An error occurred. Please call us directly or try WhatsApp.');
@@ -92,13 +96,13 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
             REQUEST A DETAILED QUOTE
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            Transparent pricing • Gas Safe Registered Engineer (Reg 979661) • No obligation
+            Transparent pricing • Gas Safe Registered Engineer (Reg {gasSafeNumber}) • No obligation
           </p>
         </div>
       </div>
 
       {success ? (
-        <div className="p-8 bg-emerald-950/90 border border-emerald-500/40 rounded-2xl text-center space-y-4 animate-in zoom-in-95">
+        <div role="status" className="p-8 bg-emerald-950/90 border border-emerald-500/40 rounded-2xl text-center space-y-4 animate-in zoom-in-95">
           <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto" />
           <h4 className="text-2xl font-bold text-white font-heading">Quote Request Received!</h4>
           <p className="text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
@@ -114,7 +118,7 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div className="p-3 bg-red-950/90 border border-red-500/40 rounded-xl text-xs text-red-300 flex items-center gap-2">
+            <div role="alert" className="p-3 bg-red-950/90 border border-red-500/40 rounded-xl text-xs text-red-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
               <span>{error}</span>
             </div>
@@ -122,12 +126,15 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="quote-name" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Full Name <span className="text-amber-400">*</span>
               </label>
               <input
+                id="quote-name"
                 type="text"
                 required
+                autoComplete="name"
+                maxLength={100}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="e.g. David Miller"
@@ -136,12 +143,16 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="quote-phone" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Phone Number <span className="text-amber-400">*</span>
               </label>
               <input
+                id="quote-phone"
                 type="tel"
                 required
+                autoComplete="tel"
+                inputMode="tel"
+                maxLength={25}
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="e.g. 07311038572"
@@ -152,12 +163,16 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="quote-email" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Email Address <span className="text-amber-400">*</span>
               </label>
               <input
+                id="quote-email"
                 type="email"
                 required
+                autoComplete="email"
+                inputMode="email"
+                maxLength={254}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="e.g. you@email.com"
@@ -166,12 +181,15 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="quote-postcode" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Postcode <span className="text-amber-400">*</span>
               </label>
               <input
+                id="quote-postcode"
                 type="text"
                 required
+                autoComplete="postal-code"
+                maxLength={12}
                 value={formData.postcode}
                 onChange={(e) => setFormData({ ...formData, postcode: e.target.value })}
                 placeholder="e.g. CW1 2AB"
@@ -182,10 +200,11 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-1">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="quote-service" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Service Required <span className="text-amber-400">*</span>
               </label>
               <select
+                id="quote-service"
                 value={formData.service}
                 onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                 className="w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl px-3 py-3 text-sm text-white focus:border-amber-500 focus:outline-none transition-colors"
@@ -202,22 +221,26 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="quote-date" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Preferred Date
               </label>
               <input
+                id="quote-date"
                 type="date"
+                min={new Date().toISOString().split('T')[0]}
+                max={new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
                 value={formData.preferredDate}
                 onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-                className="w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl px-3 py-3 text-sm text-white focus:border-amber-500 focus:outline-none transition-colors"
+                className="quote-date-input w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl px-3 py-3 text-sm text-white focus:border-amber-500 focus:outline-none transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label htmlFor="quote-time" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                 Preferred Time
               </label>
               <select
+                id="quote-time"
                 value={formData.preferredTime}
                 onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
                 className="w-full bg-[#070D1E] border border-[#1E3A8A] rounded-xl px-3 py-3 text-sm text-white focus:border-amber-500 focus:outline-none transition-colors"
@@ -230,12 +253,14 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            <label htmlFor="quote-message" className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
               Work Description & Details <span className="text-amber-400">*</span>
             </label>
             <textarea
+              id="quote-message"
               required
               rows={4}
+              maxLength={3000}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               placeholder="Describe your boiler model, symptoms, leak location or project scope..."
@@ -251,6 +276,19 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({
             <p>
               Add them in the description above, or send pictures on WhatsApp after submitting — we will match them to this request.
             </p>
+          </div>
+
+          <div className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+            <label htmlFor="quote-website">Website</label>
+            <input
+              id="quote-website"
+              name="website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={formData.website}
+              onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+            />
           </div>
 
           <button

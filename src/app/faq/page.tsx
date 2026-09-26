@@ -22,7 +22,11 @@ export default async function FAQPage() {
 
   return (
     <div className="pt-8">
-      <FAQSection faqs={faqs} phone={settings.phone} />
+      <FAQSection
+        faqs={faqs}
+        phone={settings.phone}
+        gasSafeNumber={settings.gasSafeNumber}
+      />
     </div>
   );
 }

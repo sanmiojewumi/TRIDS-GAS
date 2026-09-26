@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getSiteSettings } from '@/lib/settings';
 import { db } from '@/lib/db';
 import {
@@ -7,6 +8,15 @@ import {
 } from '@/components/home/HomepageRedesign';
 
 export const revalidate = 60;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: 'Gas Engineer Crewe | Boiler Repair, Servicing & Plumbing',
+    description: `Gas Safe registered engineer in Crewe for boiler repair, servicing, installation, CP12 and plumbing across Cheshire and towns within 30 miles. Call ${settings.phone}.`,
+    alternates: { canonical: 'https://tridsgas.co.uk' },
+  };
+}
 
 export default async function HomePage() {
   const settings = await getSiteSettings();

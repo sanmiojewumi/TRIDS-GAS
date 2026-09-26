@@ -3,6 +3,7 @@ import { verifyAdminAuth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { cleanText } from '@/lib/security';
 import { isValidAvailabilityTime } from '@/lib/availability';
+import { sendCustomerBookingConfirmationEmail } from '@/lib/email';
 
 const statuses = ['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'];
 
@@ -38,11 +39,36 @@ export async function PUT(
       return NextResponse.json({ error: 'Another active booking already uses this time' }, { status: 409 });
     }
 
+    const existing = await db.booking.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    }
+
     const booking = await db.booking.update({
       where: { id },
       data: { date, time, status },
     });
-    return NextResponse.json({ success: true, booking });
+
+    const appointmentChanged = existing.date !== date || existing.time !== time;
+    const shouldEmailCustomer =
+      status === 'CONFIRMED' && (existing.status !== 'CONFIRMED' || appointmentChanged);
+
+    let customerEmailSent = false;
+    if (shouldEmailCustomer) {
+      const result = await sendCustomerBookingConfirmationEmail({
+        customerName: booking.customerName,
+        phone: booking.phone,
+        email: booking.email,
+        postcode: booking.postcode,
+        service: booking.service,
+        date: booking.date,
+        time: booking.time,
+        notes: booking.notes,
+      });
+      customerEmailSent = result.sent;
+    }
+
+    return NextResponse.json({ success: true, booking, customerEmailSent });
   } catch {
     return NextResponse.json({ error: 'Could not update booking' }, { status: 500 });
   }

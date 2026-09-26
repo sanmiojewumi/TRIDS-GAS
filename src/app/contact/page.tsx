@@ -99,7 +99,7 @@ export default async function ContactPage() {
 
           {/* Form Column */}
           <div className="lg:col-span-7">
-            <QuoteForm />
+            <QuoteForm gasSafeNumber={settings.gasSafeNumber} />
           </div>
         </div>
 

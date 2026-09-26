@@ -5,8 +5,8 @@ import { ServicesSection } from '@/components/home/ServicesSection';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 
 export const metadata = {
-  title: 'Gas & Plumbing Services',
-  description: 'Explore full gas, heating, boiler installation, CP12 certificates, and plumbing services by TRIDS Gas & Plumbing.',
+  title: 'Gas Engineer Services in Crewe | Boiler Repair, Servicing & CP12',
+  description: 'Boiler repair, servicing, installation, landlord CP12 and plumbing from a Gas Safe registered engineer in Crewe covering Cheshire and nearby towns.',
 };
 
 export default async function ServicesPage() {

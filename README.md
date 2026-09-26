@@ -6,9 +6,9 @@ A premium, modern, high-converting full-stack website and admin portal built for
 
 ## 🛠️ Technology Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router, TypeScript, Server Components & Server Actions)
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, TypeScript, Server Components and route handlers)
 - **Styling**: Tailwind CSS + Custom British Engineering Design System (Deep Slate `#0F172A`, Metallic Amber/Gold `#F59E0B`, Safety Emerald `#059669`, glassmorphism, responsive micro-animations)
-- **Database**: Prisma ORM with SQLite database (`prisma/dev.db`) out-of-the-box, 100% PostgreSQL ready for Supabase / Neon deployment.
+- **Database**: Prisma ORM with SQLite locally and PostgreSQL in production.
 - **Icons**: Lucide React
 - **Authentication**: Custom secure session cookies with `bcryptjs` password hashing.
 
@@ -21,13 +21,14 @@ A premium, modern, high-converting full-stack website and admin portal built for
 npm install
 ```
 
-### 2. Push Database Schema & Run Initial Seed
-```bash
-npx prisma db push
-npx prisma db seed
-```
+### 2. Create the local environment
 
-### 3. Local environment
+Copy `.env.example` to `.env`, then replace every `CHANGE_ME` value. Generate a
+session secret with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+```
 
 A `.env` file is used locally (gitignored). For a first run you only need:
 
@@ -40,7 +41,11 @@ ADMIN_PASSWORD="<a-unique-password-of-at-least-16-characters>"
 NODE_ENV="development"
 ```
 
-Copy `.env.example` if you prefer to start from the template.
+### 3. Push Database Schema & Run Initial Seed
+```bash
+npx prisma db push
+npx prisma db seed
+```
 
 ### 4. Launch Development Server
 ```bash
@@ -48,7 +53,32 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Recent local UX and functionality fixes are listed in [CHANGELOG.md](./CHANGELOG.md). Nothing has been pushed yet.
+If port 3000 is occupied:
+
+```bash
+npm run dev -- -p 3001
+```
+
+Open `http://localhost:3001`.
+
+### 5. Verification
+
+```bash
+npm run lint
+npm run build
+npm audit --omit=dev
+```
+
+Manual smoke-test checklist:
+
+- Header navigation, mobile menu, telephone and booking actions
+- `/quote` query-string prefill and successful quote submission
+- `/book` service prefill, live slots and booking submission
+- `/faq` keyboard-operated accordion
+- `/admin/login`, enquiry status changes, bookings and availability controls
+- Mobile widths around 320px, 375px and 768px
+
+Recent UX and functionality changes are documented in [CHANGELOG.md](./CHANGELOG.md).
 
 ---
 
@@ -58,6 +88,8 @@ Recent local UX and functionality fixes are listed in [CHANGELOG.md](./CHANGELOG
 - Admin credentials come from `ADMIN_EMAIL` and `ADMIN_PASSWORD` in your private `.env`.
 - Passwords are stored only as bcrypt hashes in the database.
 - No default production credentials are included in the repository.
+
+Email delivery needs `SMTP_USER` and `SMTP_PASS` in `.env` (and the same values in Vercel for production). Without them, booking and confirmation emails are logged only. Confirming a booking in `/admin/bookings` emails the customer.
 
 ---
 
@@ -79,10 +111,13 @@ Recent local UX and functionality fixes are listed in [CHANGELOG.md](./CHANGELOG
 2. **Smart Quote & Booking Systems**:
    - Quote workflow storing submissions in Prisma database with status pipeline tracking (`NEW` -> `CONTACTED` -> `QUOTED` -> `BOOKED` -> `COMPLETED` -> `ARCHIVED`).
    - Online appointment booking system with date picker, time slot selection, and double-booking prevention.
+   - Admin-controlled weekly hours, slot durations and blocked dates.
 
 3. **Admin Portal (`/admin`)**:
    - Overview metrics & recent activity monitor.
    - Real-time settings manager allowing updates to business phone (`[PHONE NUMBER]`), email (`[EMAIL ADDRESS]`), Gas Safe Reg (`[GAS SAFE REGISTRATION NUMBER]`), lead engineer (`[ENGINEER NAME]`), and coverage area (`[SERVICE AREA]`).
+   - Content management for services, areas, articles, FAQs, projects, media and testimonials.
+   - Booking rescheduling/status controls and enquiry pipeline management.
 
 ---
 
