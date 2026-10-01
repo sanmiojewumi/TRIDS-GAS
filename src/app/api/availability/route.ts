@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { getAvailableSlots, isValidAvailabilityDate } from '@/lib/availability';
 import { checkRateLimit } from '@/lib/security';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   const limit = checkRateLimit(request, 'availability', { windowMs: 60 * 1000, max: 60 });
   if (!limit.allowed) {
@@ -18,7 +21,14 @@ export async function GET(request: Request) {
 
   try {
     const slots = await getAvailableSlots(date);
-    return NextResponse.json({ date, slots });
+    return NextResponse.json(
+      { date, slots },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        },
+      },
+    );
   } catch (error) {
     console.error('Failed to load availability:', error);
     return NextResponse.json({ error: 'Could not load availability' }, { status: 500 });

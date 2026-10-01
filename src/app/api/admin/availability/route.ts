@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { verifyAdminAuth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { isValidAvailabilityDate, isValidAvailabilityTime } from '@/lib/availability';
+import { formatOpeningHours, isValidAvailabilityDate, isValidAvailabilityTime, normalizeTime } from '@/lib/availability';
 import { cleanText } from '@/lib/security';
+
+function revalidatePublicBooking() {
+  revalidatePath('/');
+  revalidatePath('/book');
+  revalidatePath('/quote');
+  revalidatePath('/contact');
+  revalidatePath('/api/availability');
+}
 
 export async function GET() {
   if (!(await verifyAdminAuth())) {
@@ -35,8 +44,8 @@ export async function PUT(request: Request) {
       slotDuration: number;
     }> = body.days.map((day: Record<string, unknown>) => {
       const dayOfWeek = Number(day.dayOfWeek);
-      const startTime = cleanText(day.startTime, 5);
-      const endTime = cleanText(day.endTime, 5);
+      const startTime = normalizeTime(cleanText(day.startTime, 8));
+      const endTime = normalizeTime(cleanText(day.endTime, 8));
       const slotDuration = Number(day.slotDuration);
       if (
         !Number.isInteger(dayOfWeek) ||
@@ -54,15 +63,25 @@ export async function PUT(request: Request) {
       return { dayOfWeek, enabled: Boolean(day.enabled), startTime, endTime, slotDuration };
     });
 
-    await db.$transaction(
-      days.map((day) =>
+    await db.$transaction([
+      ...days.map((day) =>
         db.availabilityDay.upsert({
           where: { dayOfWeek: day.dayOfWeek },
           update: day,
           create: day,
         }),
       ),
-    );
+      db.siteSettings.upsert({
+        where: { id: 'default' },
+        update: { openingHours: formatOpeningHours(days), email: 'tridsbooking@gmail.com' },
+        create: {
+          id: 'default',
+          openingHours: formatOpeningHours(days),
+          email: 'tridsbooking@gmail.com',
+        },
+      }),
+    ]);
+    revalidatePublicBooking();
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Check the opening times and slot durations' }, { status: 400 });
@@ -85,6 +104,7 @@ export async function POST(request: Request) {
       update: { reason: cleanText(body.reason, 200) || null },
       create: { date, reason: cleanText(body.reason, 200) || null },
     });
+    revalidatePublicBooking();
     return NextResponse.json({ success: true, blockedDate }, { status: 201 });
   } catch {
     return NextResponse.json({ error: 'Could not block this date' }, { status: 400 });

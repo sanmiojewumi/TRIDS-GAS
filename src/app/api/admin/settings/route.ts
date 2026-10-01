@@ -15,7 +15,7 @@ export async function PUT(req: Request) {
       companyName: cleanText(body.companyName, 120),
       tagline: cleanText(body.tagline, 180),
       phone: cleanText(body.phone, 25),
-      email: cleanText(body.email, 254).toLowerCase(),
+      email: 'tridsbooking@gmail.com',
       gasSafeNumber: cleanText(body.gasSafeNumber, 30),
       engineerName: cleanText(body.engineerName, 120),
       engineerQualifications: cleanText(body.engineerQualifications, 500),

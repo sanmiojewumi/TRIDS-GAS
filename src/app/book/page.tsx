@@ -8,6 +8,8 @@ export const metadata = {
   description: 'Schedule a boiler service, landlord gas certificate, or plumbing inspection online with TRIDS Gas & Plumbing.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function BookPage({
   searchParams,
 }: {

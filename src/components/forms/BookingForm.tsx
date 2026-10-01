@@ -47,7 +47,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService }) => {
     const controller = new AbortController();
     setLoadingSlots(true);
     setError('');
-    fetch(`/api/availability?date=${encodeURIComponent(formData.date)}`, {
+    fetch(`/api/availability?date=${encodeURIComponent(formData.date)}&fresh=${Date.now()}`, {
       signal: controller.signal,
       cache: 'no-store',
     })

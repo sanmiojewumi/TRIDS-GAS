@@ -84,7 +84,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send instant notification email to official inbox tridsgasandplumbing@gmail.com
+    // Send instant notification email to official inbox tridsbooking@gmail.com
     await sendEnquiryEmailNotification({
       name,
       phone,

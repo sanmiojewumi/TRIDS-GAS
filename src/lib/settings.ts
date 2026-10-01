@@ -1,5 +1,6 @@
 import { db } from './db';
 import { isPublicHttpsUrl } from './security';
+import { SITE_URL, OFFICIAL_EMAIL } from './site';
 
 export interface SiteSettingsData {
   companyName: string;
@@ -30,7 +31,7 @@ export const defaultSettings: SiteSettingsData = {
   companyName: 'TRIDS Gas & Plumbing',
   tagline: 'Gas Safe. Professionally Done.',
   phone: '07311038572',
-  email: 'tridsgasandplumbing@gmail.com',
+  email: 'tridsbooking@gmail.com',
   gasSafeNumber: '979661',
   engineerName: 'TRIDS Gas & Plumbing',
   engineerQualifications: 'Gas Safe Registered (Reg No. 979661) • City & Guilds Qualified • Unvented Hot Water Specialist',
@@ -69,7 +70,7 @@ export function getPublicSocialUrls(settings: SiteSettingsData): string[] {
 export function getReviewsTargetUrl(settings: SiteSettingsData): string {
   return isPublicHttpsUrl(settings.googleReviewsUrl)
     ? settings.googleReviewsUrl
-    : 'https://tridsgas.co.uk/reviews';
+    : `${SITE_URL}/reviews`;
 }
 
 export async function getSiteSettings(): Promise<SiteSettingsData> {
@@ -82,7 +83,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
         companyName: settings.companyName,
         tagline: settings.tagline,
         phone: settings.phone,
-        email: settings.email,
+        email: OFFICIAL_EMAIL,
         gasSafeNumber: settings.gasSafeNumber,
         engineerName: settings.engineerName || defaultSettings.engineerName,
         engineerQualifications: settings.engineerQualifications,

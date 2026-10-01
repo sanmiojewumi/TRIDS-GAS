@@ -1,12 +1,15 @@
 import nodemailer from 'nodemailer';
 import { getSiteSettings } from './settings';
 import { cleanText, escapeHtml } from './security';
-
-const OFFICIAL_EMAIL = 'tridsgasandplumbing@gmail.com';
+import { OFFICIAL_EMAIL } from './site';
 
 function getMailFrom(companyName: string): string {
   const user = process.env.SMTP_USER || process.env.GMAIL_USER || OFFICIAL_EMAIL;
   return `"${companyName}" <${user}>`;
+}
+
+function getBusinessInbox(): string {
+  return OFFICIAL_EMAIL;
 }
 
 function formatAppointmentDate(date: string): string {
@@ -65,7 +68,7 @@ export interface SendBookingNotificationParams {
 // 1. Dispatch Enquiry / Quote Request Notification Email
 export async function sendEnquiryEmailNotification(params: SendEnquiryNotificationParams) {
   const settings = await getSiteSettings();
-  const recipientEmail = settings.email || OFFICIAL_EMAIL;
+  const recipientEmail = getBusinessInbox();
   const safe = {
     name: escapeHtml(params.name),
     phone: escapeHtml(params.phone),
@@ -171,7 +174,7 @@ export async function sendEnquiryEmailNotification(params: SendEnquiryNotificati
 // 2. Dispatch Online Booking Notification Email
 export async function sendBookingEmailNotification(params: SendBookingNotificationParams) {
   const settings = await getSiteSettings();
-  const recipientEmail = settings.email || OFFICIAL_EMAIL;
+  const recipientEmail = getBusinessInbox();
   const safe = {
     customerName: escapeHtml(params.customerName),
     phone: escapeHtml(params.phone),
@@ -283,7 +286,7 @@ export async function sendCustomerBookingConfirmationEmail(
   const safe = {
     customerName: escapeHtml(params.customerName),
     phone: escapeHtml(settings.phone),
-    companyEmail: escapeHtml(settings.email || OFFICIAL_EMAIL),
+    companyEmail: escapeHtml(OFFICIAL_EMAIL),
     service: escapeHtml(params.service),
     date: escapeHtml(formattedDate),
     time: escapeHtml(params.time),
@@ -356,7 +359,8 @@ export async function sendCustomerBookingConfirmationEmail(
   const mailOptions = {
     from: getMailFrom(settings.companyName),
     to: customerEmail,
-    replyTo: settings.email || OFFICIAL_EMAIL,
+    bcc: OFFICIAL_EMAIL,
+    replyTo: OFFICIAL_EMAIL,
     subject: `Appointment confirmed: ${cleanText(params.service, 80)} on ${cleanText(formattedDate, 40)} at ${cleanText(params.time, 5)}`.replace(/[\r\n]/g, ''),
     html: htmlContent,
   };

@@ -133,8 +133,8 @@ export default function AdminAvailabilityPage() {
               <span className={`text-xs font-bold uppercase ${day.enabled ? 'text-emerald-400' : 'text-slate-500'}`}>
                 {day.enabled ? 'Taking bookings' : 'Closed'}
               </span>
-              <input type="time" disabled={!day.enabled} value={day.startTime} onChange={(event) => updateDay(day.dayOfWeek, { startTime: event.target.value })} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-40" />
-              <input type="time" disabled={!day.enabled} value={day.endTime} onChange={(event) => updateDay(day.dayOfWeek, { endTime: event.target.value })} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-40" />
+              <input type="time" step={60} disabled={!day.enabled} value={day.startTime} onChange={(event) => updateDay(day.dayOfWeek, { startTime: event.target.value })} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-40" />
+              <input type="time" step={60} disabled={!day.enabled} value={day.endTime} onChange={(event) => updateDay(day.dayOfWeek, { endTime: event.target.value })} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-40" />
               <select disabled={!day.enabled} value={day.slotDuration} onChange={(event) => updateDay(day.dayOfWeek, { slotDuration: Number(event.target.value) })} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-40">
                 <option value={30}>30-minute slots</option>
                 <option value={60}>60-minute slots</option>

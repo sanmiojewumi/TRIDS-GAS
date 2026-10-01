@@ -42,16 +42,35 @@ export function isValidAvailabilityDate(date: string): boolean {
 }
 
 export function isValidAvailabilityTime(time: string): boolean {
-  if (!TIME_PATTERN.test(time)) return false;
-  const minutes = toMinutes(time);
-  return minutes >= 0 && minutes < 24 * 60;
+  return TIME_PATTERN.test(normalizeTime(time));
+}
+
+export function normalizeTime(value: string): string {
+  const match = String(value || '').trim().match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return '';
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (hours > 23 || minutes > 59) return '';
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
+export function formatOpeningHours(
+  days: Array<{ dayOfWeek: number; enabled: boolean; startTime: string; endTime: string }>,
+): string {
+  const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const open = days.filter((day) => day.enabled);
+  if (!open.length) return 'Appointments by arrangement';
+  return open
+    .map((day) => `${names[day.dayOfWeek]} ${normalizeTime(day.startTime)}-${normalizeTime(day.endTime)}`)
+    .join(' | ');
 }
 
 export function isFutureLondonAppointment(date: string, time: string): boolean {
-  if (!isValidAvailabilityDate(date) || !isValidAvailabilityTime(time)) return false;
+  const normalized = normalizeTime(time);
+  if (!isValidAvailabilityDate(date) || !isValidAvailabilityTime(normalized)) return false;
   const now = londonNow();
   if (date > now.date) return true;
-  return date === now.date && toMinutes(time) > now.minutes;
+  return date === now.date && toMinutes(normalized) > now.minutes;
 }
 
 export async function getAvailableSlots(date: string): Promise<string[]> {
@@ -68,17 +87,19 @@ export async function getAvailableSlots(date: string): Promise<string[]> {
   ]);
 
   if (!rule?.enabled || blocked) return [];
+  const startTime = normalizeTime(rule.startTime);
+  const endTime = normalizeTime(rule.endTime);
   if (
-    !isValidAvailabilityTime(rule.startTime) ||
-    !isValidAvailabilityTime(rule.endTime) ||
+    !isValidAvailabilityTime(startTime) ||
+    !isValidAvailabilityTime(endTime) ||
     rule.slotDuration < 15 ||
     rule.slotDuration > 480
   ) {
     return [];
   }
 
-  const start = toMinutes(rule.startTime);
-  const end = toMinutes(rule.endTime);
+  const start = toMinutes(startTime);
+  const end = toMinutes(endTime);
   if (start >= end) return [];
 
   const occupied = new Set(bookings.map((booking) => booking.time));

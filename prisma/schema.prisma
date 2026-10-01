@@ -24,7 +24,7 @@ model SiteSettings {
   companyName            String   @default("TRIDS Gas & Plumbing")
   tagline                String   @default("Gas Safe. Professionally Done.")
   phone                  String   @default("07311038572")
-  email                  String   @default("tridsgasandplumbing@gmail.com")
+  email                  String   @default("tridsbooking@gmail.com")
   gasSafeNumber          String   @default("979661")
   engineerName           String   @default("")
   engineerQualifications String   @default("Gas Safe Registered • NVQ Level 3 Heating & Ventilation • Unvented Hot Water Certified")

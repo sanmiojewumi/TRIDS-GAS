@@ -96,14 +96,14 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialSettings }) =
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Email Address</label>
+            <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Official Correspondence Email</label>
             <input
               type="text"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="e.g. info@tridsgas.co.uk"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white outline-none focus:border-amber-500 font-mono"
+              value="tridsbooking@gmail.com"
+              readOnly
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-emerald-300 outline-none font-mono"
             />
+            <p className="mt-1 text-[10px] text-slate-500">All bookings and notifications are sent to this inbox.</p>
           </div>
 
           <div>
