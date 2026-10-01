@@ -10,33 +10,47 @@ async function main() {
   const adminPassword = process.env.ADMIN_PASSWORD;
   const adminName = process.env.ADMIN_NAME?.trim() || 'TRIDS Administrator';
 
-  if (!adminEmail || !adminPassword || adminPassword.length < 16) {
+  if (!adminEmail || !adminPassword || adminPassword.length < 8) {
     throw new Error(
-      'ADMIN_EMAIL and a unique ADMIN_PASSWORD of at least 16 characters are required to seed the admin account.',
+      'ADMIN_EMAIL and ADMIN_PASSWORD of at least 8 characters are required to seed the admin account.',
     );
   }
 
   const passwordHash = await bcrypt.hash(adminPassword, 12);
-  await prisma.adminUser.upsert({
-    where: { email: adminEmail },
-    update: { name: adminName, passwordHash, role: 'ADMIN' },
-    create: {
-      name: adminName,
-      email: adminEmail,
-      passwordHash,
-      role: 'ADMIN',
-    },
-  });
+  const existingAdmin = await prisma.adminUser.findUnique({ where: { email: adminEmail } });
+  if (existingAdmin) {
+    await prisma.adminUser.update({
+      where: { email: adminEmail },
+      data: { name: adminName, passwordHash, role: 'ADMIN' },
+    });
+  } else {
+    const firstAdmin = await prisma.adminUser.findFirst();
+    if (firstAdmin) {
+      await prisma.adminUser.update({
+        where: { id: firstAdmin.id },
+        data: { name: adminName, email: adminEmail, passwordHash, role: 'ADMIN' },
+      });
+    } else {
+      await prisma.adminUser.create({
+        data: {
+          name: adminName,
+          email: adminEmail,
+          passwordHash,
+          role: 'ADMIN',
+        },
+      });
+    }
+  }
 
   await prisma.siteSettings.upsert({
     where: { id: 'default' },
-    update: {},
+    update: { email: 'tridsbooking@gmail.com' },
     create: {
       id: 'default',
       companyName: 'TRIDS Gas & Plumbing',
       tagline: 'Gas Safe. Professionally Done.',
       phone: '07311038572',
-      email: 'tridsgasandplumbing@gmail.com',
+      email: 'tridsbooking@gmail.com',
       gasSafeNumber: '979661',
       engineerName: 'TRIDS Gas & Plumbing',
       googleReviewsUrl: '#',
@@ -263,7 +277,7 @@ async function main() {
     { slug: 'sandbach', name: 'Sandbach', description: 'Domestic gas and plumbing cover for Sandbach, Elworth and surrounding villages.' },
     { slug: 'nantwich', name: 'Nantwich', description: 'Installations, servicing and leak repairs across Nantwich and CW5.' },
     { slug: 'congleton', name: 'Congleton', description: 'Gas Safe work and plumbing for Congleton, Holmes Chapel and nearby towns.' },
-    { slug: 'warrington', name: 'Warrington', description: 'Boiler and plumbing callouts across Warrington within our 50-mile radius.' },
+    { slug: 'warrington', name: 'Warrington', description: 'Boiler and plumbing callouts across Warrington within the TRIDS coverage area.' },
     { slug: 'stockport', name: 'Stockport', description: 'Heating repairs, servicing and CP12 certificates for Stockport homes.' },
     { slug: 'manchester', name: 'Manchester', description: 'Selected Greater Manchester jobs for boilers, gas safety and plumbing.' },
     { slug: 'stoke-on-trent', name: 'Stoke-on-Trent', description: 'Staffordshire coverage for boiler installs, servicing and emergency plumbing.' },
@@ -344,7 +358,7 @@ async function main() {
     {
       id: 'faq-areas',
       question: 'Which areas do you cover?',
-      answer: 'We are based in Crewe and cover Cheshire, Warrington, Stockport, Greater Manchester, Stoke-on-Trent and locations within roughly a 50-mile radius.',
+      answer: 'We are based in Crewe and cover Cheshire, towns within 30 miles of Crewe, plus Warrington, Stockport, Manchester and Stoke-on-Trent.',
       category: 'Coverage',
       order: 2,
     },
@@ -381,7 +395,7 @@ async function main() {
   for (const faq of faqs) {
     await prisma.faqItem.upsert({
       where: { id: faq.id },
-      update: {},
+      update: faq.id === 'faq-areas' ? { answer: faq.answer } : {},
       create: { ...faq, published: true },
     });
   }
