@@ -5,10 +5,13 @@ import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 import { ShieldCheck, Award, CheckCircle2, UserCheck, PhoneCall, Sparkles } from 'lucide-react';
 
-export const metadata = {
-  title: 'About TRIDS Gas & Plumbing | Meet the Lead Engineer',
-  description: 'Learn about TRIDS Gas & Plumbing, operated by a Gas Safe registered engineer committed to technical excellence and safety.',
-};
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/about', {
+  title: 'About TRIDS Gas & Plumbing | Gas Engineer in Crewe',
+  description:
+    'TRIDS Gas & Plumbing is a Gas Safe registered engineer based in Crewe, providing boiler, heating and plumbing services across Cheshire.',
+});
 
 export default async function AboutPage() {
   const settings = await getSiteSettings();

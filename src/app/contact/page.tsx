@@ -4,10 +4,13 @@ import { QuoteForm } from '@/components/forms/QuoteForm';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 import { Phone, Mail, MapPin, Clock, ShieldCheck } from 'lucide-react';
 
-export const metadata = {
-  title: 'Contact TRIDS Gas & Plumbing',
-  description: 'Get in touch with TRIDS Gas & Plumbing by phone, email, or online enquiry form.',
-};
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/contact', {
+  title: 'Contact a Gas Engineer in Crewe | TRIDS Gas & Plumbing',
+  description:
+    'Call, email or send an enquiry to book a Gas Safe engineer in Crewe and Cheshire for boiler repair, servicing, CP12 or plumbing.',
+});
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();

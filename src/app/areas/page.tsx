@@ -3,19 +3,39 @@ import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { ServiceAreasSection } from '@/components/home/ServiceAreasSection';
 import type { Metadata } from 'next';
+import { coverageAreasForListing } from '@/lib/coverage';
+import { pageSeo } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageSeo('/areas', {
   title: 'Gas Engineer Coverage | Crewe, Cheshire & 30 Miles',
   description:
     'TRIDS Gas & Plumbing covers Crewe, Cheshire towns within 30 miles, plus Warrington, Stockport, Manchester and Stoke-on-Trent. Book a Gas Safe engineer near you.',
-};
+});
 
 export default async function AreasPage() {
   const settings = await getSiteSettings();
-  const areas = await db.serviceArea.findMany({
-    where: { active: true },
-    orderBy: { name: 'asc' },
-  });
+  const listed = new Map<string, { id: string; name: string; slug: string; description: string }>(
+    coverageAreasForListing().map((area) => [area.slug, area]),
+  );
+
+  try {
+    const stored = await db.serviceArea.findMany({
+      where: { active: true },
+      orderBy: { name: 'asc' },
+    });
+    for (const area of stored) {
+      listed.set(area.slug, {
+        id: area.id,
+        name: area.name,
+        slug: area.slug,
+        description: area.description,
+      });
+    }
+  } catch (error) {
+    console.error('Could not load stored service areas; using coverage list.', error);
+  }
+
+  const areas = Array.from(listed.values()).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="bg-slate-950 py-12">

@@ -3,10 +3,13 @@ import { BookingForm } from '@/components/forms/BookingForm';
 import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 
-export const metadata = {
-  title: 'Book an Appointment Online | TRIDS Gas & Plumbing',
-  description: 'Schedule a boiler service, landlord gas certificate, or plumbing inspection online with TRIDS Gas & Plumbing.',
-};
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/book', {
+  title: 'Book a Gas Engineer in Crewe | Online Appointment',
+  description:
+    'Book a boiler service, landlord CP12, heating repair or plumbing visit with a Gas Safe registered engineer in Crewe and Cheshire.',
+});
 
 export const dynamic = 'force-dynamic';
 

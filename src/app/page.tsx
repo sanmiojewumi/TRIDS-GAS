@@ -6,16 +6,16 @@ import {
   HomepageReview,
   HomepageService,
 } from '@/components/home/HomepageRedesign';
+import { pageSeo } from '@/lib/seo';
 
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
-  return {
-    title: 'Gas Engineer Crewe | Boiler Repair, Servicing & Plumbing',
-    description: `Gas Safe registered engineer in Crewe for boiler repair, servicing, installation, CP12 and plumbing across Cheshire and towns within 30 miles. Call ${settings.phone}.`,
-    alternates: { canonical: 'https://tridsgas.co.uk' },
-  };
+  return pageSeo('/', {
+    title: 'Gas Engineer Crewe & Cheshire | Boiler Repair, Servicing & Plumbing',
+    description: `Gas Safe registered gas engineer in Crewe for boiler repair, servicing, installation, CP12 and plumbing across Cheshire. Call ${settings.phone}.`,
+  });
 }
 
 export default async function HomePage() {

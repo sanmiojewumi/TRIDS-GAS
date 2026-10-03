@@ -5,7 +5,9 @@ import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 import { QuoteForm } from '@/components/forms/QuoteForm';
-import { areaSeoDescription, areaSeoTitle, coverageTowns } from '@/lib/coverage';
+import { areaSeoDescription, areaSeoTitle, coverageTowns, getCoverageTown } from '@/lib/coverage';
+import { breadcrumbJsonLd, pageSeo } from '@/lib/seo';
+import { SITE_URL } from '@/lib/site';
 import { MapPin, Phone, ShieldCheck, Flame, Wrench } from 'lucide-react';
 
 interface AreaPageProps {
@@ -13,31 +15,51 @@ interface AreaPageProps {
 }
 
 export async function generateStaticParams() {
-  const areas = await db.serviceArea.findMany({
-    where: { active: true },
-    select: { slug: true },
-  });
-  const seeded = coverageTowns.map((town) => ({ slug: town.slug }));
-  const slugs = new Set([...areas.map((area) => area.slug), ...seeded.map((area) => area.slug)]);
+  const slugs = new Set<string>(coverageTowns.map((town) => town.slug));
+  try {
+    const areas = await db.serviceArea.findMany({
+      where: { active: true },
+      select: { slug: true },
+    });
+    for (const area of areas) slugs.add(area.slug);
+  } catch (error) {
+    console.error('Could not load service area slugs for static params.', error);
+  }
   return Array.from(slugs).map((slug) => ({ slug }));
+}
+
+async function resolveArea(slug: string) {
+  const fallback = getCoverageTown(slug);
+  try {
+    const stored = await db.serviceArea.findUnique({ where: { slug } });
+    if (stored) return stored;
+  } catch (error) {
+    console.error('Could not load service area from database.', error);
+  }
+  if (!fallback) return null;
+  return {
+    slug: fallback.slug,
+    name: fallback.name,
+    description: fallback.description,
+    seoTitle: areaSeoTitle(fallback.name),
+    seoDescription: areaSeoDescription(fallback.name, fallback.description),
+  };
 }
 
 export async function generateMetadata({ params }: AreaPageProps) {
   const { slug } = await params;
-  const area = await db.serviceArea.findUnique({ where: { slug } });
-  if (!area) return { title: 'Area Not Found' };
-  const fallback = coverageTowns.find((town) => town.slug === slug);
+  const area = await resolveArea(slug);
+  if (!area) return { title: 'Area Not Found', robots: { index: false, follow: false } };
 
-  return {
+  return pageSeo(`/areas/${area.slug}`, {
     title: area.seoTitle || areaSeoTitle(area.name),
-    description: area.seoDescription || areaSeoDescription(area.name, fallback?.description || area.description),
-    alternates: { canonical: `https://tridsgas.co.uk/areas/${area.slug}` },
-  };
+    description: area.seoDescription || areaSeoDescription(area.name, area.description),
+  });
 }
 
 export default async function AreaDetailPage({ params }: AreaPageProps) {
   const { slug } = await params;
-  const area = await db.serviceArea.findUnique({ where: { slug } });
+  const area = await resolveArea(slug);
   if (!area) notFound();
 
   const settings = await getSiteSettings();
@@ -51,15 +73,21 @@ export default async function AreaDetailPage({ params }: AreaPageProps) {
       '@type': 'HVACBusiness',
       name: settings.companyName,
       telephone: settings.phone,
-      url: 'https://tridsgas.co.uk',
+      url: SITE_URL,
     },
     areaServed: area.name,
-    url: `https://tridsgas.co.uk/areas/${area.slug}`,
+    url: `${SITE_URL}/areas/${area.slug}`,
   };
+  const crumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Service areas', path: '/areas' },
+    { name: area.name, path: `/areas/${area.slug}` },
+  ]);
 
   return (
     <div className="space-y-12 bg-slate-950 py-12 lg:py-20">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs) }} />
       <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
         <div className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl lg:p-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-mono font-bold uppercase text-amber-400">

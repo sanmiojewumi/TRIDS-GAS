@@ -92,10 +92,10 @@ export const Header: React.FC<HeaderProps> = ({ settings }) => {
             <TRIDSLogo size="lg" />
             <Link
               href="/"
-              className="min-w-0 overflow-hidden rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="min-w-0 shrink rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               aria-label="TRIDS Gas & Plumbing home"
             >
-              <span className="header-brand-3d block truncate whitespace-nowrap font-heading text-[clamp(0.7rem,2.15vw,1.3rem)] font-extrabold uppercase tracking-[0.055em] max-[359px]:hidden">
+              <span className="header-brand-3d block whitespace-nowrap font-heading text-[clamp(0.7rem,2.15vw,1.3rem)] font-extrabold uppercase tracking-[0.06em] max-[359px]:hidden">
                 TRIDS GAS &amp; PLUMBING
               </span>
             </Link>

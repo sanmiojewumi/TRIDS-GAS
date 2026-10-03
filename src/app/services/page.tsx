@@ -4,10 +4,13 @@ import { getSiteSettings } from '@/lib/settings';
 import { ServicesSection } from '@/components/home/ServicesSection';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 
-export const metadata = {
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/services', {
   title: 'Gas Engineer Services in Crewe | Boiler Repair, Servicing & CP12',
-  description: 'Boiler repair, servicing, installation, landlord CP12 and plumbing from a Gas Safe registered engineer in Crewe covering Cheshire and nearby towns.',
-};
+  description:
+    'Boiler repair, servicing, installation, landlord CP12 and plumbing from a Gas Safe registered engineer in Crewe covering Cheshire and nearby towns.',
+});
 
 export default async function ServicesPage() {
   const settings = await getSiteSettings();

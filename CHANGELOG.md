@@ -1,5 +1,13 @@
 # TRIDS Gas & Plumbing changelog
 
+## Live domain, admin login and floating controls — 27 September 2026
+
+- Public site URL is now `https://tridsgas.com`, with admin login at `/admin/login`.
+- Official customer correspondence email is `tridsbooking@gmail.com`.
+- The virtual assistant is a small bottom popup with a draggable button, and the WhatsApp icon is visible and draggable on all screen sizes.
+- Header brand text is larger, with a sharper 3D treatment.
+- Crewe and Cheshire local SEO titles, keywords and homepage heading were strengthened. Search ranking cannot be guaranteed.
+
 ## Customer appointment confirmation emails — 26 September 2026
 
 - Customers now receive a confirmation email when an admin confirms or reschedules a confirmed appointment.

@@ -2,24 +2,32 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { getPublicSocialUrls, getSiteSettings } from '@/lib/settings';
 import { SiteChrome } from '@/components/layout/SiteChrome';
-import { coverageTowns } from '@/lib/coverage';
+import { SITE_URL } from '@/lib/site';
+import { DEFAULT_OG_IMAGE, buildBusinessJsonLd } from '@/lib/seo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
+  const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 
   return {
-    metadataBase: new URL('https://tridsgas.co.uk'),
+    metadataBase: new URL(SITE_URL),
     title: {
       default: `Gas Engineer Crewe | ${settings.companyName} | Gas Safe ${settings.gasSafeNumber}`,
       template: `%s | ${settings.companyName}`,
     },
     description: `Gas Safe registered gas engineer and plumber in Crewe covering Cheshire, towns within 30 miles of Crewe, plus Warrington, Stockport, Manchester and Stoke-on-Trent. Boiler repair, servicing, installation and CP12. Call ${settings.phone}.`,
     keywords: [
+      'gas engineer',
+      'gas engineer near me',
+      'gas Crewe',
       'gas engineer Crewe',
+      'gas engineer in Crewe',
       'plumber Crewe',
       'boiler repair Crewe',
       'boiler servicing Crewe',
+      'gas Cheshire',
       'gas engineer Cheshire',
+      'gas engineer in Cheshire',
       'plumber Cheshire',
       'gas engineer Nantwich',
       'gas engineer Sandbach',
@@ -34,21 +42,21 @@ export async function generateMetadata(): Promise<Metadata> {
     ],
     authors: [{ name: settings.companyName }],
     creator: settings.companyName,
-    alternates: {
-      canonical: 'https://tridsgas.co.uk',
-    },
+    publisher: settings.companyName,
+    category: 'home services',
+    applicationName: settings.companyName,
+    ...(googleVerification ? { verification: { google: googleVerification } } : {}),
     openGraph: {
       type: 'website',
       locale: 'en_GB',
-      url: 'https://tridsgas.co.uk',
+      siteName: settings.companyName,
       title: `Gas Engineer Crewe | ${settings.companyName}`,
       description: settings.heroSubheading,
-      siteName: settings.companyName,
       images: [
         {
-          url: '/images/trids-logo.png',
-          width: 1200,
-          height: 630,
+          url: DEFAULT_OG_IMAGE,
+          width: 1600,
+          height: 900,
           alt: `${settings.companyName} Gas Safe registered engineer in Crewe`,
         },
       ],
@@ -61,6 +69,13 @@ export async function generateMetadata(): Promise<Metadata> {
     robots: {
       index: true,
       follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
     },
   };
 }
@@ -73,49 +88,7 @@ export default async function RootLayout({
   const settings = await getSiteSettings();
   const sameAs = getPublicSocialUrls(settings);
 
-  const schemaJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': ['HVACBusiness', 'Plumber'],
-    name: settings.companyName,
-    description: settings.heroSubheading,
-    url: 'https://tridsgas.co.uk',
-    telephone: settings.phone,
-    email: settings.email,
-    image: 'https://tridsgas.co.uk/images/trids-logo.png',
-    address: {
-      '@type': 'PostalAddress',
-      addressCountry: 'GB',
-      addressLocality: 'Crewe',
-      addressRegion: 'Cheshire',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 53.097,
-      longitude: -2.441,
-    },
-    areaServed: [
-      {
-        '@type': 'GeoCircle',
-        geoMidpoint: {
-          '@type': 'GeoCoordinates',
-          latitude: 53.097,
-          longitude: -2.441,
-        },
-        geoRadius: 48280,
-        name: '30 miles from Crewe',
-      },
-      'Cheshire',
-      ...coverageTowns.map((town) => town.name),
-    ],
-    hasCredential: {
-      '@type': 'EducationalOccupationalCredential',
-      credentialCategory: 'Gas Safe Registration',
-      identifier: settings.gasSafeNumber,
-    },
-    openingHours: 'Mo-Fr 08:00-18:00',
-    priceRange: '££',
-    ...(sameAs.length ? { sameAs } : {}),
-  };
+  const schemaJsonLd = buildBusinessJsonLd(settings, sameAs);
 
   return (
     <html lang="en" className="dark scroll-smooth overflow-x-hidden">

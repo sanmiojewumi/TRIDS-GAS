@@ -23,6 +23,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import type { SiteSettingsData } from '@/lib/settings';
+import { GasSafeLogoBadge } from '@/components/common/GasSafeLogoBadge';
 
 export interface HomepageService {
   id: string;
@@ -239,16 +240,15 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 sm:py-14 lg:min-h-[690px] lg:grid-cols-[1.04fr_.96fr] lg:px-8 lg:py-20">
           <div className="z-10 max-w-3xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-emerald-300">
-              <ShieldCheck className="h-4 w-4" />
-              Gas Safe Registered · {settings.gasSafeNumber}
+            <div className="mb-6">
+              <GasSafeLogoBadge registrationNumber={settings.gasSafeNumber} size="md" theme="dark" />
             </div>
 
             <p className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-amber-400">
               {settings.companyName}
             </p>
             <h1 className="max-w-3xl font-heading text-[2.25rem] font-extrabold leading-[1.06] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl xl:text-7xl">
-              Professional Gas & Heating Services{' '}
+              Gas Engineer in Crewe &amp; Cheshire{' '}
               <span className="text-amber-400">You Can Trust</span>
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
@@ -478,12 +478,8 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
 
         <section className="border-y border-slate-200 bg-white py-10">
           <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-28">
-            <div className="flex items-center gap-4">
-              <ShieldCheck className="h-9 w-9 shrink-0 text-emerald-600" />
-              <div>
-                <p className="text-sm font-extrabold text-slate-900">Gas Safe Registered</p>
-                <p className="text-xs text-slate-500">Registration {settings.gasSafeNumber}</p>
-              </div>
+            <div className="flex items-center">
+              <GasSafeLogoBadge registrationNumber={settings.gasSafeNumber} size="sm" theme="light" />
             </div>
             {settings.engineerQualifications
               .split('•')

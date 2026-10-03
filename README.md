@@ -37,7 +37,8 @@ DATABASE_URL="file:./dev.db"
 SESSION_SECRET="<at-least-32-random-characters>"
 ADMIN_NAME="TRIDS Administrator"
 ADMIN_EMAIL="<your-private-admin-email>"
-ADMIN_PASSWORD="<a-unique-password-of-at-least-16-characters>"
+ADMIN_PASSWORD="<a unique admin password>"
+NEXT_PUBLIC_SITE_URL="https://tridsgas.com"
 NODE_ENV="development"
 ```
 
@@ -84,7 +85,7 @@ Recent UX and functionality changes are documented in [CHANGELOG.md](./CHANGELOG
 
 ## 🔐 Admin Dashboard Access
 
-- **URL**: `http://localhost:3000/admin/login`
+- **URL**: `https://tridsgas.com/admin/login` (local: `http://localhost:3000/admin/login`)
 - Admin credentials come from `ADMIN_EMAIL` and `ADMIN_PASSWORD` in your private `.env`.
 - Passwords are stored only as bcrypt hashes in the database.
 - No default production credentials are included in the repository.

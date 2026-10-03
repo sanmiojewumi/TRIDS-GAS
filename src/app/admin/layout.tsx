@@ -1,8 +1,8 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { verifyAdminAuth } from '@/lib/auth';
 import { TRIDSLogo } from '@/components/common/TRIDSLogo';
+import { verifyAdminAuth } from '@/lib/auth';
 import {
   LayoutDashboard,
   Inbox,
@@ -20,6 +20,15 @@ import {
   CircleHelp,
   Sparkles,
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false, noimageindex: true },
+  },
+};
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const isAuth = await verifyAdminAuth();

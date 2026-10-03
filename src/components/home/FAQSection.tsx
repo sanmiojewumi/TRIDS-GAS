@@ -16,14 +16,7 @@ interface FAQSectionProps {
   gasSafeNumber?: string;
 }
 
-export const FAQSection: React.FC<FAQSectionProps> = ({
-  faqs = [],
-  phone = '07311038572',
-  gasSafeNumber = '979661',
-}) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
-  const defaultFaqs: FAQItem[] = [
+export const defaultFaqs: FAQItem[] = [
     {
       question: 'How do I verify that TRIDS Gas & Plumbing is Gas Safe registered?',
       answer:
@@ -63,10 +56,17 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
     {
       question: 'How do enquiries and booking confirmations work?',
       answer:
-        'When you submit a quote request or book an online slot on our website, all details are instantly dispatched to our official email (tridsgasandplumbing@gmail.com) and logged in our database. Our engineer will contact you promptly to confirm.',
+        'When you submit a quote request or book an online slot on our website, all details are instantly dispatched to our official email (tridsbooking@gmail.com) and logged in our database. Our engineer will contact you promptly to confirm.',
       category: 'BOOKINGS',
     },
-  ];
+];
+
+export const FAQSection: React.FC<FAQSectionProps> = ({
+  faqs = [],
+  phone = '07311038572',
+  gasSafeNumber = '979661',
+}) => {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
   const displayedFaqs = faqs.length > 0 ? faqs : defaultFaqs;
 
   const toggleFAQ = (index: number) => {

@@ -1,9 +1,12 @@
 import React from 'react';
 import { getSiteSettings } from '@/lib/settings';
 
-export const metadata = {
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/privacy', {
   title: 'Privacy Policy | TRIDS Gas & Plumbing',
-};
+  description: 'How TRIDS Gas & Plumbing collects and uses enquiry, booking and website information.',
+});
 
 export default async function PrivacyPage() {
   const settings = await getSiteSettings();

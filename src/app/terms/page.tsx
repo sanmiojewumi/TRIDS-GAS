@@ -1,9 +1,12 @@
 import React from 'react';
 import { getSiteSettings } from '@/lib/settings';
 
-export const metadata = {
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/terms', {
   title: 'Terms & Conditions | TRIDS Gas & Plumbing',
-};
+  description: 'Terms of use for booking and using TRIDS Gas & Plumbing services.',
+});
 
 export default async function TermsPage() {
   const settings = await getSiteSettings();

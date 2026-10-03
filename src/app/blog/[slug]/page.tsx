@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { EmergencyBanner } from '@/components/common/EmergencyBanner';
+import { pageSeo } from '@/lib/seo';
 import { ArrowLeft, Calendar, User, BookOpen } from 'lucide-react';
 
 interface ArticlePageProps {
@@ -16,10 +17,10 @@ export async function generateMetadata({ params }: ArticlePageProps) {
   const post = await db.blogPost.findUnique({ where: { slug } });
   if (!post) return { title: 'Article Not Found' };
 
-  return {
-    title: post.seoTitle || `${post.title} | TRIDS Knowledge Centre`,
+  return pageSeo(`/blog/${post.slug}`, {
+    title: post.seoTitle || `${post.title} | Gas Engineer Advice Crewe`,
     description: post.seoDescription || post.excerpt,
-  };
+  });
 }
 
 export default async function ArticleDetailPage({ params }: ArticlePageProps) {

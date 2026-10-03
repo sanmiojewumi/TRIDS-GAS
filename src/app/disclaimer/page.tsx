@@ -1,9 +1,12 @@
 import React from 'react';
 import { getSiteSettings } from '@/lib/settings';
 
-export const metadata = {
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/disclaimer', {
   title: 'Disclaimer | TRIDS Gas & Plumbing',
-};
+  description: 'Website and service disclaimer for TRIDS Gas & Plumbing.',
+});
 
 export default async function DisclaimerPage() {
   const settings = await getSiteSettings();

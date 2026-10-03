@@ -1,8 +1,11 @@
 import React from 'react';
 
-export const metadata = {
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/cookies', {
   title: 'Cookie Policy | TRIDS Gas & Plumbing',
-};
+  description: 'How cookies are used on the TRIDS Gas & Plumbing website.',
+});
 
 export default function CookiesPage() {
   return (

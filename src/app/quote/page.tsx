@@ -3,10 +3,13 @@ import { QuoteForm } from '@/components/forms/QuoteForm';
 import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 
-export const metadata = {
-  title: 'Request a Free Quote | TRIDS Gas & Plumbing',
-  description: 'Get a transparent, professional quote for boiler installation, servicing, or plumbing repairs from TRIDS Gas & Plumbing.',
-};
+import { pageSeo } from '@/lib/seo';
+
+export const metadata = pageSeo('/quote', {
+  title: 'Get a Gas Engineer Quote in Crewe | TRIDS',
+  description:
+    'Request a quote for boiler installation, servicing, landlord CP12 or plumbing repairs from TRIDS Gas & Plumbing in Crewe.',
+});
 
 export default async function QuotePage({
   searchParams,

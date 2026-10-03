@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { coverageTowns } from '../src/lib/coverage';
 
 const prisma = new PrismaClient();
 
@@ -271,17 +272,11 @@ async function main() {
     });
   }
 
-  const areas = [
-    { slug: 'crewe', name: 'Crewe', description: 'Primary base. Fast response for boilers, CP12s and plumbing across CW1 and CW2.' },
-    { slug: 'winsford', name: 'Winsford', description: 'Boiler servicing, repairs and landlord certificates across Winsford and CW7.' },
-    { slug: 'sandbach', name: 'Sandbach', description: 'Domestic gas and plumbing cover for Sandbach, Elworth and surrounding villages.' },
-    { slug: 'nantwich', name: 'Nantwich', description: 'Installations, servicing and leak repairs across Nantwich and CW5.' },
-    { slug: 'congleton', name: 'Congleton', description: 'Gas Safe work and plumbing for Congleton, Holmes Chapel and nearby towns.' },
-    { slug: 'warrington', name: 'Warrington', description: 'Boiler and plumbing callouts across Warrington within the TRIDS coverage area.' },
-    { slug: 'stockport', name: 'Stockport', description: 'Heating repairs, servicing and CP12 certificates for Stockport homes.' },
-    { slug: 'manchester', name: 'Manchester', description: 'Selected Greater Manchester jobs for boilers, gas safety and plumbing.' },
-    { slug: 'stoke-on-trent', name: 'Stoke-on-Trent', description: 'Staffordshire coverage for boiler installs, servicing and emergency plumbing.' },
-  ];
+  const areas = coverageTowns.map((town) => ({
+    slug: town.slug,
+    name: town.name,
+    description: town.description,
+  }));
 
   for (const area of areas) {
     await prisma.serviceArea.upsert({

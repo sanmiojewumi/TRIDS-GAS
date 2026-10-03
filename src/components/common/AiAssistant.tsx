@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Bot, Send, Sparkles, X } from 'lucide-react';
 
 type Message = { role: 'user' | 'assistant'; content: string };
@@ -11,7 +11,7 @@ export function AiAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Hi, I can help you choose a service or explain how booking works. How can I help?',
+      content: 'Hi — I can help with services or booking.',
     },
   ]);
   const [input, setInput] = useState('');
@@ -19,20 +19,11 @@ export function AiAssistant() {
   const [error, setError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const openedByUserRef = useRef(false);
-
-  useEffect(() => {
-    if (sessionStorage.getItem('trids-assistant-seen')) return;
-    const timer = window.setTimeout(() => {
-      setOpen(true);
-      sessionStorage.setItem('trids-assistant-seen', 'true');
-    }, 6000);
-    return () => window.clearTimeout(timer);
-  }, []);
+  const draggedRef = useRef(false);
 
   useEffect(() => {
     if (!open) return;
-    if (openedByUserRef.current) inputRef.current?.focus({ preventScroll: true });
+    inputRef.current?.focus({ preventScroll: true });
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
     };
@@ -75,90 +66,82 @@ export function AiAssistant() {
     await sendMessage(input);
   };
 
-  const closeAssistant = () => {
-    setOpen(false);
-    openedByUserRef.current = false;
-    sessionStorage.setItem('trids-assistant-seen', 'true');
-  };
-
   return (
-    <div className="fixed bottom-20 left-4 z-50 sm:bottom-6">
+    <motion.div
+      drag
+      dragMomentum={false}
+      dragElastic={0.12}
+      onDragStart={() => {
+        draggedRef.current = false;
+      }}
+      onDrag={() => {
+        draggedRef.current = true;
+      }}
+      className="fixed bottom-[5.75rem] left-3 z-[60] cursor-grab select-none active:cursor-grabbing lg:bottom-6 lg:left-6"
+    >
       {open && (
         <section
           role="dialog"
           aria-modal="false"
           aria-labelledby="trids-assistant-title"
-          className="relative mb-3 flex h-[min(34rem,calc(100dvh-8rem))] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 shadow-2xl"
+          className="mb-2 flex h-64 w-[min(18rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 shadow-2xl"
         >
-          <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden" aria-hidden="true">
-            <Image
-              src="/images/trids-logo.png"
-              alt=""
-              width={520}
-              height={520}
-              className="w-[125%] max-w-none select-none object-contain opacity-[0.055] grayscale"
-            />
-          </div>
-          <div className="pointer-events-none absolute -left-20 top-14 z-0 h-48 w-48 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden="true" />
-          <div className="pointer-events-none absolute -bottom-20 -right-20 z-0 h-52 w-52 rounded-full bg-red-500/10 blur-3xl" aria-hidden="true" />
-
-          <header className="relative z-10 flex items-center justify-between border-b border-emerald-500/20 bg-slate-900/95 p-4 backdrop-blur-sm">
-            <div className="flex items-center gap-2">
-              <span className="relative rounded-xl bg-amber-400 p-2 text-slate-950">
-                <Bot className="h-5 w-5" />
-                <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-slate-900 bg-emerald-400" aria-hidden="true" />
+          <header className="flex items-center justify-between border-b border-emerald-500/20 bg-slate-900 px-2.5 py-2">
+            <div className="flex items-center gap-1.5">
+              <span className="rounded-lg bg-amber-400 p-1 text-slate-950">
+                <Bot className="h-3.5 w-3.5" />
               </span>
-              <div>
-                <h2 id="trids-assistant-title" className="text-sm font-extrabold text-white">TRIDS Virtual Assistant</h2>
-                <p className="text-[10px] text-emerald-400">Online · General guidance</p>
-              </div>
+              <h2 id="trids-assistant-title" className="text-[11px] font-extrabold text-white">
+                TRIDS Help
+              </h2>
             </div>
-            <button type="button" onClick={closeAssistant} aria-label="Close assistant" className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white">
-              <X className="h-4 w-4" />
+            <button
+              type="button"
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={() => setOpen(false)}
+              aria-label="Close assistant"
+              className="rounded-md p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+            >
+              <X className="h-3.5 w-3.5" />
             </button>
           </header>
 
-          <div className="relative z-10 flex-1 space-y-3 overflow-y-auto p-4" aria-live="polite">
+          <div className="flex-1 space-y-2 overflow-y-auto p-2.5" aria-live="polite">
             {messages.map((message, index) => (
-              <div key={`${message.role}-${index}`} className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-6 ${
-                message.role === 'user'
-                  ? 'ml-auto bg-blue-600 text-white'
-                  : 'bg-slate-800 text-slate-200'
-              }`}>
+              <div
+                key={`${message.role}-${index}`}
+                className={`max-w-[90%] whitespace-pre-wrap rounded-xl px-2.5 py-1.5 text-[11px] leading-4 ${
+                  message.role === 'user' ? 'ml-auto bg-blue-600 text-white' : 'bg-slate-800 text-slate-200'
+                }`}
+              >
                 {message.content}
               </div>
             ))}
-            {loading && <div className="w-fit rounded-2xl bg-slate-800 px-3.5 py-2.5 text-sm text-slate-400">Thinking…</div>}
-            {error && <div role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 p-2.5 text-xs text-red-300">{error}</div>}
-            {messages.length === 1 && !loading && (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {['Book a service', 'Boiler repair', 'Areas covered'].map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    onClick={() => sendMessage(suggestion)}
-                    className="rounded-full border border-blue-500/40 bg-blue-500/10 px-3 py-1.5 text-xs font-bold text-blue-200 hover:bg-blue-500/20"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
+            {loading && <div className="w-fit rounded-xl bg-slate-800 px-2.5 py-1.5 text-[11px] text-slate-400">Thinking…</div>}
+            {error && (
+              <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 p-2 text-[11px] text-red-300">
+                {error}
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          <form onSubmit={send} className="relative z-10 flex gap-2 border-t border-slate-700 bg-slate-900/95 p-3 backdrop-blur-sm">
+          <form
+            onSubmit={send}
+            onPointerDown={(event) => event.stopPropagation()}
+            className="flex gap-1.5 border-t border-slate-700 bg-slate-900 p-2"
+          >
             <input
               ref={inputRef}
               value={input}
               onChange={(event) => setInput(event.target.value)}
               maxLength={1200}
-              placeholder="Ask about services or booking…"
+              placeholder="Ask a question…"
               aria-label="Message the TRIDS assistant"
-              className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none focus:border-amber-400"
+              className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-950 px-2 py-1.5 text-[11px] text-white outline-none focus:border-amber-400"
             />
-            <button disabled={loading || !input.trim()} aria-label="Send message" className="rounded-xl bg-amber-400 px-3 text-slate-950 disabled:opacity-40">
-              <Send className="h-4 w-4" />
+            <button disabled={loading || !input.trim()} aria-label="Send message" className="rounded-lg bg-amber-400 px-2 text-slate-950 disabled:opacity-40">
+              <Send className="h-3.5 w-3.5" />
             </button>
           </form>
         </section>
@@ -167,17 +150,19 @@ export function AiAssistant() {
       <button
         type="button"
         onClick={() => {
-          openedByUserRef.current = !open;
+          if (draggedRef.current) {
+            draggedRef.current = false;
+            return;
+          }
           setOpen((current) => !current);
-          sessionStorage.setItem('trids-assistant-seen', 'true');
         }}
-        className="flex min-h-12 items-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 via-blue-600 to-red-600 px-4 text-sm font-extrabold text-white shadow-xl transition hover:from-emerald-500 hover:via-blue-500 hover:to-red-500"
+        className="flex h-11 items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-600 via-blue-600 to-red-600 px-3 text-[11px] font-extrabold text-white shadow-xl"
         aria-expanded={open}
         aria-label={open ? 'Close TRIDS assistant' : 'Open TRIDS assistant'}
       >
-        <Sparkles className="h-4 w-4 text-amber-300" />
-        Virtual Assistant
+        <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+        Help
       </button>
-    </div>
+    </motion.div>
   );
 }

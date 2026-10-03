@@ -60,7 +60,7 @@ export const BoilerQuoteCalculator: React.FC = () => {
         body: JSON.stringify({
           name,
           phone,
-          email: 'not-provided@tridsgas.co.uk',
+          email: 'not-provided@tridsgas.com',
           postcode,
           service: 'Boiler Installation (Instant Estimator)',
           message: `Instant Estimator Quote: £${estimated.min} - £${estimated.max}. Property: ${propertyType}, ${bedrooms}, ${bathrooms}, Current: ${currentBoiler}`,
@@ -308,7 +308,7 @@ export const BoilerQuoteCalculator: React.FC = () => {
                 </div>
               </div>
 
-              {/* Direct Instant Notification Form to tridsgasandplumbing@gmail.com */}
+              {/* Direct Instant Notification Form to tridsbooking@gmail.com */}
               {submitted ? (
                 <div className="p-6 rounded-2xl bg-emerald-950/60 border border-emerald-500/60 text-emerald-300 text-sm space-y-2 animate-in fade-in">
                   <div className="w-12 h-12 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center mx-auto font-bold">
@@ -316,7 +316,7 @@ export const BoilerQuoteCalculator: React.FC = () => {
                   </div>
                   <h4 className="text-lg font-bold text-white">Estimate Sent to TRIDS Engineer!</h4>
                   <p className="text-xs text-slate-300">
-                    We have received your request at <strong className="text-yellow-400 font-mono">tridsgasandplumbing@gmail.com</strong> and will call you back shortly.
+                    We have received your request at <strong className="text-yellow-400 font-mono">tridsbooking@gmail.com</strong> and will call you back shortly.
                   </p>
                 </div>
               ) : (

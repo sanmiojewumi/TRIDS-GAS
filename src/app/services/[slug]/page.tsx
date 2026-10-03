@@ -6,6 +6,8 @@ import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 import { QuoteForm } from '@/components/forms/QuoteForm';
+import { breadcrumbJsonLd, pageSeo } from '@/lib/seo';
+import { SITE_URL } from '@/lib/site';
 import { Flame, Wrench, CheckCircle2, ArrowLeft, ShieldCheck, Phone } from 'lucide-react';
 
 interface ServicePageProps {
@@ -17,10 +19,10 @@ export async function generateMetadata({ params }: ServicePageProps) {
   const service = await db.service.findUnique({ where: { slug } });
   if (!service) return { title: 'Service Not Found' };
 
-  return {
-    title: `${service.name} | TRIDS Gas & Plumbing`,
-    description: service.description,
-  };
+  return pageSeo(`/services/${service.slug}`, {
+    title: `${service.name} in Crewe | Gas Engineer Cheshire`,
+    description: `${service.description} Book a Gas Safe registered engineer from TRIDS in Crewe.`,
+  });
 }
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
@@ -29,9 +31,31 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   if (!service) notFound();
 
   const settings = await getSiteSettings();
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.name,
+    description: service.description,
+    serviceType: service.name,
+    provider: {
+      '@type': 'HVACBusiness',
+      name: settings.companyName,
+      telephone: settings.phone,
+      url: SITE_URL,
+    },
+    areaServed: ['Crewe', 'Cheshire'],
+    url: `${SITE_URL}/services/${service.slug}`,
+  };
+  const crumbs = breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Services', path: '/services' },
+    { name: service.name, path: `/services/${service.slug}` },
+  ]);
 
   return (
     <div className="py-12 lg:py-20 bg-slate-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbs) }} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* Back button */}

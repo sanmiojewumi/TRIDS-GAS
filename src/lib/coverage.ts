@@ -31,3 +31,16 @@ export function areaSeoTitle(name: string): string {
 export function areaSeoDescription(name: string, description: string): string {
   return `${description} Book a Gas Safe registered engineer from TRIDS Gas & Plumbing in Crewe.`;
 }
+
+export function getCoverageTown(slug: string) {
+  return coverageTowns.find((town) => town.slug === slug);
+}
+
+export function coverageAreasForListing() {
+  return coverageTowns.map((town) => ({
+    id: town.slug,
+    name: town.name,
+    slug: town.slug,
+    description: town.description,
+  }));
+}
