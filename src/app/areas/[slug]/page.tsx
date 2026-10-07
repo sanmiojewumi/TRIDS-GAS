@@ -100,6 +100,15 @@ export default async function AreaDetailPage({ params }: AreaPageProps) {
             {area.description} TRIDS is a Gas Safe registered engineer based in Crewe, covering
             Cheshire and towns within about 30 miles, plus the extra areas already served.
           </p>
+          {area.slug === 'crewe' && (
+            <p className="text-sm text-slate-300">
+              For boiler repair, servicing, breakdowns and landlord CP12 in Crewe, see the dedicated{' '}
+              <Link href="/gas-engineer-crewe" className="font-bold text-amber-400 hover:text-amber-300">
+                gas engineer Crewe
+              </Link>{' '}
+              page.
+            </p>
+          )}
 
           <div className="flex flex-col items-stretch gap-4 pt-4 sm:flex-row sm:items-center">
             <Link

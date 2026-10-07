@@ -1,6 +1,6 @@
 import { db } from './db';
 import { isPublicHttpsUrl } from './security';
-import { SITE_URL, OFFICIAL_EMAIL } from './site';
+import { OFFICIAL_EMAIL, GOOGLE_WRITE_REVIEW_URL } from './site';
 
 export interface SiteSettingsData {
   companyName: string;
@@ -38,12 +38,12 @@ export const defaultSettings: SiteSettingsData = {
   serviceArea: 'Crewe, Cheshire towns within 30 miles, plus Warrington, Stockport, Manchester and Stoke-on-Trent',
   emergencyNotice: 'If you smell gas or suspect a carbon monoxide leak, turn off your gas supply at the meter immediately and call the National Gas Emergency Service on 0800 111 999.',
   heroHeading: 'GAS & PLUMBING YOU CAN TRUST.',
-  heroSubheading: 'Gas Safe boiler, heating and plumbing services from Crewe across Cheshire and nearby towns.',
+  heroSubheading: 'Gas Safe registered heating and plumbing engineer serving Crewe, Nantwich, Sandbach, Middlewich, Winsford and surrounding Cheshire areas.',
   primaryCtaText: 'BOOK A SERVICE',
   secondaryCtaText: 'CALL NOW',
   openingHours: 'Mon - Fri: 08:00 - 18:00 | Saturday mornings by arrangement',
   address: 'Based in Crewe, covering Cheshire and towns within 30 miles, plus Warrington, Stockport, Manchester and Stoke-on-Trent',
-  googleReviewsUrl: '#',
+  googleReviewsUrl: GOOGLE_WRITE_REVIEW_URL,
   facebookUrl: '',
   instagramUrl: '',
   tiktokUrl: '',
@@ -70,7 +70,7 @@ export function getPublicSocialUrls(settings: SiteSettingsData): string[] {
 export function getReviewsTargetUrl(settings: SiteSettingsData): string {
   return isPublicHttpsUrl(settings.googleReviewsUrl)
     ? settings.googleReviewsUrl
-    : `${SITE_URL}/reviews`;
+    : GOOGLE_WRITE_REVIEW_URL;
 }
 
 export async function getSiteSettings(): Promise<SiteSettingsData> {

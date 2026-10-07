@@ -1,3 +1,5 @@
+import { timingSafeEqual } from 'crypto';
+
 type RateLimitOptions = {
   windowMs: number;
   max: number;
@@ -98,4 +100,16 @@ export function isPublicHttpsUrl(value?: string | null): value is string {
   } catch {
     return false;
   }
+}
+
+export function isAuthorizedCronRequest(request: Request): boolean {
+  const secret = process.env.CRON_SECRET?.trim();
+  if (!secret) {
+    return process.env.NODE_ENV !== 'production';
+  }
+
+  const header = request.headers.get('authorization') || '';
+  const expected = `Bearer ${secret}`;
+  if (header.length !== expected.length) return false;
+  return timingSafeEqual(Buffer.from(header), Buffer.from(expected));
 }

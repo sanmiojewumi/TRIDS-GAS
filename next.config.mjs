@@ -4,8 +4,8 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ''}`,
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com data:",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
   "img-src 'self' data: blob: https://images.unsplash.com",
   "media-src 'self' blob:",
   "connect-src 'self'",
@@ -23,12 +23,24 @@ const nextConfig = {
     root: process.cwd(),
   },
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
     ],
+  },
+  async redirects() {
+    return [
+      { source: '/gas-engineer-crewe/', destination: '/gas-engineer-crewe', permanent: true },
+      { source: '/boiler-repair-crewe/', destination: '/boiler-repair-crewe', permanent: true },
+      { source: '/boiler-service-crewe/', destination: '/boiler-service-crewe', permanent: true },
+      { source: '/boiler-breakdown-crewe/', destination: '/boiler-breakdown-crewe', permanent: true },
+      { source: '/landlord-gas-safety-crewe/', destination: '/landlord-gas-safety-crewe', permanent: true },
+      { source: '/central-heating-repair-crewe/', destination: '/central-heating-repair-crewe', permanent: true },
+      { source: '/gas-cooker-installation-crewe/', destination: '/gas-cooker-installation-crewe', permanent: true },
+    ];
   },
   async headers() {
     return [
@@ -49,6 +61,10 @@ const nextConfig = {
                 },
               ]),
         ],
+      },
+      {
+        source: '/images/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
     ];
   },

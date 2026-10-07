@@ -121,7 +121,10 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
         {/* Reviews Cards Grid */}
         {testimonials.length === 0 && (
           <div className="mb-8 p-8 rounded-2xl border border-[#1E3A8A] bg-[#0F1C3F]/60 text-center text-slate-300 text-sm">
-            Reviews will appear here once published. Use <strong className="text-white">Leave a Review</strong> to share your experience.
+            Reviews will appear here once published. Thank you for choosing TRIDS. If you&apos;re happy
+            with the work, an honest Google review helps this small local business — we never buy reviews
+            or tell customers what to write. Use <strong className="text-white">Leave a Review</strong> below
+            or ask after a completed job.
           </div>
         )}
 
@@ -169,7 +172,10 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
               </button>
 
               <h3 id="review-dialog-title" className="text-xl font-bold text-white mb-2 font-heading">Submit a Customer Review</h3>
-              <p className="text-slate-300 text-xs mb-4">Share your feedback about TRIDS Gas & Plumbing.</p>
+              <p className="text-slate-300 text-xs mb-4">
+                Thank you for choosing TRIDS. If you&apos;re happy with the work, we&apos;d really appreciate an
+                honest review. Write it in your own words.
+              </p>
 
               {submitted ? (
                 <div className="p-6 bg-emerald-950/80 border border-emerald-500/40 rounded-2xl text-center space-y-2">

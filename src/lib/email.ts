@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import { getSiteSettings } from './settings';
 import { cleanText, escapeHtml } from './security';
-import { OFFICIAL_EMAIL } from './site';
+import { OFFICIAL_EMAIL, SITE_URL } from './site';
 
 function getMailFrom(companyName: string): string {
   const user = process.env.SMTP_USER || process.env.GMAIL_USER || OFFICIAL_EMAIL;
@@ -36,6 +36,9 @@ function getTransporter() {
       port,
       secure: port === 465,
       auth: { user, pass },
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 10000,
     });
   }
 
@@ -377,5 +380,114 @@ export async function sendCustomerBookingConfirmationEmail(
   } catch (error) {
     console.error(`[EMAIL DISPATCH ERROR] Failed to send customer confirmation:`, error);
     return { sent: false };
+  }
+}
+
+export interface SendReviewNotificationParams {
+  source: 'website' | 'google';
+  customerName: string;
+  rating: number;
+  service?: string;
+  location?: string | null;
+  review: string;
+  published?: boolean;
+  permalink?: string;
+}
+
+export async function sendReviewNotificationEmail(params: SendReviewNotificationParams) {
+  const settings = await getSiteSettings();
+  const recipientEmail = getBusinessInbox();
+  const stars = Math.min(5, Math.max(0, Number(params.rating) || 0));
+  const isGoogle = params.source === 'google';
+  const safe = {
+    customerName: escapeHtml(params.customerName),
+    rating: `${'★'.repeat(stars)}${'☆'.repeat(5 - stars)} (${stars}/5)`,
+    service: escapeHtml(params.service || (isGoogle ? 'Google review' : 'Website review')),
+    location: escapeHtml(params.location || ''),
+    review: escapeHtml(params.review).replace(/\r?\n/g, '<br>'),
+    permalink: escapeHtml(params.permalink || `${SITE_URL}/admin/testimonials`),
+    companyName: escapeHtml(settings.companyName),
+  };
+  const badgeLabel = isGoogle ? 'NEW GOOGLE REVIEW' : 'NEW WEBSITE REVIEW';
+  const badgeColor = isGoogle ? '#3b82f6' : '#f59e0b';
+  const statusLine = isGoogle
+    ? 'This review was posted on Google. Reply from Google Business Profile if a response is needed.'
+    : 'This website review is waiting for moderation in Admin → Reviews before it appears on the site.';
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>${badgeLabel} - ${settings.companyName}</title>
+      <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #070d1e; color: #f8fafc; margin: 0; padding: 20px; }
+        .card { background-color: #0f1c3f; border: 1px solid #1e3a8a; border-radius: 16px; max-width: 600px; margin: 0 auto; padding: 24px; }
+        .header { border-bottom: 2px solid ${badgeColor}; padding-bottom: 12px; margin-bottom: 20px; }
+        .title { color: #ffffff; font-size: 20px; font-weight: bold; }
+        .badge { background-color: ${badgeColor}; color: #070d1e; font-weight: bold; padding: 4px 10px; border-radius: 8px; font-size: 12px; }
+        .row { margin-bottom: 12px; }
+        .label { color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .value { color: #ffffff; font-size: 15px; font-weight: 600; margin-top: 2px; }
+        .box { background-color: #070d1e; border: 1px solid #1e3a8a; padding: 14px; border-radius: 12px; margin-top: 16px; }
+        .footer { margin-top: 24px; font-size: 12px; color: #64748b; text-align: center; border-top: 1px solid #1e3a8a; padding-top: 12px; }
+        .button { display: inline-block; margin-top: 16px; background-color: ${badgeColor}; color: #070d1e; font-weight: bold; text-decoration: none; padding: 10px 16px; border-radius: 10px; }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="header">
+          <span class="badge">${badgeLabel}</span>
+          <div class="title" style="margin-top: 8px;">${safe.companyName}</div>
+        </div>
+        <div class="row">
+          <div class="label">Customer</div>
+          <div class="value">${safe.customerName}</div>
+        </div>
+        <div class="row">
+          <div class="label">Rating</div>
+          <div class="value" style="color: #f59e0b;">${safe.rating}</div>
+        </div>
+        <div class="row">
+          <div class="label">${isGoogle ? 'Source' : 'Service'}</div>
+          <div class="value">${safe.service}</div>
+        </div>
+        ${params.location ? `
+        <div class="row">
+          <div class="label">${isGoogle ? 'Posted' : 'Location'}</div>
+          <div class="value">${safe.location}</div>
+        </div>
+        ` : ''}
+        <div class="box">
+          <div class="label" style="margin-bottom: 4px;">Review</div>
+          <div class="value" style="color: #e2e8f0; font-weight: normal; font-size: 14px; line-height: 1.5;">${safe.review}</div>
+        </div>
+        <p style="color:#cbd5e1;font-size:13px;line-height:1.5;">${statusLine}</p>
+        <a class="button" href="${safe.permalink}">${isGoogle ? 'Open Google reviews' : 'Open admin reviews'}</a>
+        <div class="footer">
+          Sent to ${escapeHtml(OFFICIAL_EMAIL)} • Gas Safe Reg ${escapeHtml(settings.gasSafeNumber)}
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const mailOptions = {
+    from: getMailFrom(settings.companyName),
+    to: recipientEmail,
+    subject: `${badgeLabel}: ${stars} star${stars === 1 ? '' : 's'} from ${cleanText(params.customerName, 80)}`.replace(/[\r\n]/g, ''),
+    html: htmlContent,
+  };
+
+  try {
+    const transporter = getTransporter();
+    if (transporter) {
+      await transporter.sendMail(mailOptions);
+      console.log(`[EMAIL DISPATCH SUCCESS] Review notification sent to ${recipientEmail}`);
+    } else {
+      console.log(`[EMAIL NOTIFICATION LOGGED] Target: ${recipientEmail} | Subject: ${mailOptions.subject}`);
+    }
+  } catch (error) {
+    console.error(`[EMAIL DISPATCH ERROR] Failed to send review email:`, error);
   }
 }

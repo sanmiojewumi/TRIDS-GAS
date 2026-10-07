@@ -1,6 +1,6 @@
 import React from 'react';
 import { db } from '@/lib/db';
-import { getSiteSettings } from '@/lib/settings';
+import { getReviewsTargetUrl, getSiteSettings } from '@/lib/settings';
 import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 import type { Metadata } from 'next';
 
@@ -8,7 +8,8 @@ import { pageSeo } from '@/lib/seo';
 
 export const metadata: Metadata = pageSeo('/reviews', {
   title: 'Customer Reviews | Gas Engineer Crewe',
-  description: 'Read published customer reviews for TRIDS Gas & Plumbing in Crewe and Cheshire.',
+  description:
+    'Read published customer reviews for TRIDS Gas & Plumbing in Crewe. After a completed job we ask for an honest Google review — never bought or scripted.',
 });
 
 export default async function ReviewsPage() {
@@ -39,7 +40,7 @@ export default async function ReviewsPage() {
 
   return (
     <div className="bg-slate-950 py-12">
-      <TestimonialsSection testimonials={testimonials} googleReviewsUrl={settings.googleReviewsUrl} />
+      <TestimonialsSection testimonials={testimonials} googleReviewsUrl={getReviewsTargetUrl(settings)} />
     </div>
   );
 }

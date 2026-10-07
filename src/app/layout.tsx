@@ -1,9 +1,23 @@
 import type { Metadata } from 'next';
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { getPublicSocialUrls, getSiteSettings } from '@/lib/settings';
 import { SiteChrome } from '@/components/layout/SiteChrome';
 import { SITE_URL } from '@/lib/site';
 import { DEFAULT_OG_IMAGE, buildBusinessJsonLd } from '@/lib/seo';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-jakarta',
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -24,7 +38,13 @@ export async function generateMetadata(): Promise<Metadata> {
       'gas engineer in Crewe',
       'plumber Crewe',
       'boiler repair Crewe',
-      'boiler servicing Crewe',
+      'boiler service Crewe',
+      'boiler breakdown Crewe',
+      'heating engineer Crewe',
+      'landlord gas safety certificate Crewe',
+      'landlord CP12 Crewe',
+      'central heating repair Crewe',
+      'gas cooker installation Crewe',
       'gas Cheshire',
       'gas engineer Cheshire',
       'gas engineer in Cheshire',
@@ -91,7 +111,7 @@ export default async function RootLayout({
   const schemaJsonLd = buildBusinessJsonLd(settings, sameAs);
 
   return (
-    <html lang="en" className="dark scroll-smooth overflow-x-hidden">
+    <html lang="en" className={`${inter.variable} ${jakarta.variable} dark scroll-smooth overflow-x-hidden`}>
       <head>
         <script
           type="application/ld+json"

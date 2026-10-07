@@ -12,12 +12,13 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ settings }) => {
   const serviceLinks = [
-    ['Boiler Repairs', '/services/boiler-repairs'],
-    ['Boiler Servicing', '/services/boiler-servicing'],
-    ['Boiler Installation', '/services/boiler-installation'],
-    ['Gas Safety Checks', '/services/gas-safety-checks'],
-    ['Central Heating', '/services/central-heating-services'],
-    ['General Plumbing', '/services/general-plumbing'],
+    ['Gas Engineer Crewe', '/gas-engineer-crewe'],
+    ['Boiler Repair Crewe', '/boiler-repair-crewe'],
+    ['Boiler Service Crewe', '/boiler-service-crewe'],
+    ['Boiler Breakdown Crewe', '/boiler-breakdown-crewe'],
+    ['Landlord CP12 Crewe', '/landlord-gas-safety-crewe'],
+    ['Central Heating Repair', '/central-heating-repair-crewe'],
+    ['Gas Cooker Installation', '/gas-cooker-installation-crewe'],
   ];
 
   const areaLinks = coverageTowns.slice(0, 10).map((town) => [town.name, `/areas/${town.slug}`]);
@@ -31,8 +32,8 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
             <TRIDSLogo size="lg" />
             <p className="text-sm font-semibold text-amber-400">{settings.tagline}</p>
             <p className="max-w-sm text-sm leading-6 text-slate-300">
-              Gas Safe boiler, heating and plumbing from Crewe across Cheshire, towns within
-              30 miles, and the extra areas TRIDS already covers.
+              Gas Safe registered heating and plumbing engineer serving Crewe, Nantwich, Sandbach,
+              Middlewich, Winsford and surrounding Cheshire areas.
             </p>
             <SocialLinks settings={settings} />
             <div className="inline-flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-slate-200">

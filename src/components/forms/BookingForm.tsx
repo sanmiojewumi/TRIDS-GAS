@@ -28,6 +28,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService }) => {
   const [loadingSlots, setLoadingSlots] = useState(false);
 
   const servicesList = [
+    'Gas engineer Crewe',
     'Boiler Servicing',
     'Boiler Installation Survey',
     'Boiler Repair & Diagnostics',

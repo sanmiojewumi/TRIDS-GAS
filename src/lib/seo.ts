@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { LOCAL_LANDING_SLUGS } from '@/lib/local-landings';
 import { coverageTowns } from '@/lib/coverage';
 import type { SiteSettingsData } from '@/lib/settings';
 import { SITE_URL } from '@/lib/site';
@@ -46,6 +47,7 @@ export const PUBLIC_INDEX_ROUTES = [
   '/cookies',
   '/terms',
   '/disclaimer',
+  ...LOCAL_LANDING_SLUGS.map((slug) => `/${slug}`),
 ] as const;
 
 export function absoluteUrl(path = '/'): string {
@@ -174,12 +176,13 @@ export function buildBusinessJsonLd(settings: SiteSettingsData, sameAs: string[]
         },
         knowsAbout: [
           'gas engineer Crewe',
-          'boiler repair',
-          'boiler servicing',
-          'boiler installation',
-          'landlord CP12',
-          'gas safety check',
-          'central heating',
+          'heating engineer Crewe',
+          'boiler repair Crewe',
+          'boiler service Crewe',
+          'boiler breakdown Crewe',
+          'landlord gas safety certificate Crewe',
+          'central heating repair',
+          'gas cooker installation',
           'domestic plumbing',
         ],
         openingHoursSpecification: [

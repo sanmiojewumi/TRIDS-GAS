@@ -67,6 +67,14 @@ const serviceMeta = {
   'general-plumbing': { icon: Wrench, accent: 'bg-cyan-50 text-cyan-600' },
 } as const;
 
+const creweLandingBySlug: Record<string, string> = {
+  'boiler-repairs': '/boiler-repair-crewe',
+  'boiler-servicing': '/boiler-service-crewe',
+  'gas-safety-checks': '/landlord-gas-safety-crewe',
+  'central-heating-services': '/central-heating-repair-crewe',
+  'boiler-installation': '/gas-engineer-crewe',
+};
+
 const shortServiceDescriptions: Record<string, string> = {
   'boiler-repairs': 'Diagnosis and repair for boiler faults, lockouts and loss of heat.',
   'boiler-servicing': 'Annual safety and efficiency checks for reliable performance.',
@@ -247,12 +255,12 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
             <p className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-amber-400">
               {settings.companyName}
             </p>
-            <h1 className="max-w-3xl font-heading text-[2.25rem] font-extrabold leading-[1.06] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl xl:text-7xl">
-              Gas Engineer in Crewe &amp; Cheshire{' '}
-              <span className="text-amber-400">You Can Trust</span>
+            <h1 className="max-w-3xl font-heading text-[2.1rem] font-extrabold leading-[1.12] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl">
+              Gas Engineer in Crewe – Boiler Repair, Servicing &amp; Heating
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
-              {settings.heroSubheading}
+              Gas Safe registered heating and plumbing engineer serving Crewe, Nantwich, Sandbach,
+              Middlewich, Winsford and surrounding Cheshire areas.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -273,11 +281,30 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
             </div>
 
             <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold text-slate-300">
-              {['Gas Safe Registered', 'Professional', 'Reliable'].map((item) => (
+              {['Gas Safe Registered', 'Boiler repair & servicing', 'Landlord CP12'].map((item) => (
                 <span key={item} className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-emerald-400" />
                   {item}
                 </span>
+              ))}
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {[
+                ['/gas-engineer-crewe', 'Gas engineer Crewe'],
+                ['/boiler-repair-crewe', 'Boiler repair'],
+                ['/boiler-service-crewe', 'Boiler service'],
+                ['/boiler-breakdown-crewe', 'Breakdown'],
+                ['/landlord-gas-safety-crewe', 'CP12'],
+                ['/central-heating-repair-crewe', 'Heating repair'],
+                ['/gas-cooker-installation-crewe', 'Cooker install'],
+              ].map(([href, label]) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-200 hover:border-amber-400 hover:text-amber-300"
+                >
+                  {label}
+                </Link>
               ))}
             </div>
           </div>
@@ -320,7 +347,7 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
           {quickServices.map((service) => (
             <Link
               key={service.id}
-              href={`/services/${service.slug}`}
+              href={creweLandingBySlug[service.slug] || `/services/${service.slug}`}
               className="flex min-w-[165px] snap-start items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 hover:text-blue-700 lg:min-w-0 lg:border-r lg:border-slate-200 lg:last:border-0"
             >
               <span>{service.name}</span>
@@ -339,7 +366,8 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
               <p className="section-kicker">Built on safe engineering</p>
               <h2 className="section-title">Why Choose Us?</h2>
               <p className="section-intro">
-                Direct, professional support for your home&apos;s gas, heating and plumbing systems.
+                Direct, professional support for gas, heating and plumbing in Crewe and nearby Cheshire towns.
+                Work is carried out by a Gas Safe registered engineer, number {settings.gasSafeNumber}.
               </p>
             </div>
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -366,8 +394,8 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
                 <p className="section-kicker">Gas, heating & plumbing</p>
                 <h2 className="section-title">What We Do</h2>
                 <p className="section-intro">
-                  Practical expertise for repairs, maintenance, safety checks and new installations.
-                </p>
+                Boiler repair, servicing, breakdowns, heating repairs, landlord CP12 and plumbing for Crewe homes.
+              </p>
               </div>
               <Link
                 href="/services"
@@ -384,7 +412,7 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
                 return (
                   <Link
                     key={service.id}
-                    href={`/services/${service.slug}`}
+                    href={creweLandingBySlug[service.slug] || `/services/${service.slug}`}
                     className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_35px_rgba(15,23,42,.05)] transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_20px_45px_rgba(15,23,42,.1)]"
                   >
                     <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${meta?.accent || 'bg-slate-100 text-slate-700'}`}>
@@ -550,8 +578,12 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-8 text-sm text-slate-600">
-                Published customer reviews will appear here.
+              <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-8 text-sm leading-6 text-slate-600">
+                Published customer reviews will appear here. After a completed job we ask for an honest Google
+                review — never bought or scripted wording.
+                <Link href="/reviews" className="ml-1 font-extrabold text-blue-700 hover:text-blue-800">
+                  Leave or read a review
+                </Link>
               </div>
             )}
           </div>
@@ -562,9 +594,9 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
         <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-amber-400/15 blur-3xl" aria-hidden="true" />
         <div className="relative mx-auto flex max-w-5xl flex-col items-center px-4 text-center sm:px-6">
           <Sparkles className="h-7 w-7 text-amber-400" />
-          <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-5xl">Need a Gas Engineer?</h2>
+          <h2 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-5xl">Need a Gas Engineer in Crewe?</h2>
           <p className="mt-4 max-w-2xl text-base text-blue-100 sm:text-lg">
-            Get professional help with your boiler, heating, gas or plumbing needs.
+            Book boiler repair, servicing, heating work or a landlord gas safety certificate with TRIDS.
           </p>
           <div className="mt-8 flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:justify-center">
             <Link

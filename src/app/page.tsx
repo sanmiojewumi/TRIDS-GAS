@@ -11,10 +11,10 @@ import { pageSeo } from '@/lib/seo';
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
   return pageSeo('/', {
-    title: 'Gas Engineer Crewe & Cheshire | Boiler Repair, Servicing & Plumbing',
-    description: `Gas Safe registered gas engineer in Crewe for boiler repair, servicing, installation, CP12 and plumbing across Cheshire. Call ${settings.phone}.`,
+    title: 'Gas Engineer Crewe | Boiler Repair, Servicing & Heating',
+    description:
+      'Gas Safe registered gas engineer in Crewe for boiler repair, servicing, breakdowns, heating and landlord CP12. Serving Nantwich, Sandbach, Middlewich, Winsford and surrounding Cheshire.',
   });
 }
 

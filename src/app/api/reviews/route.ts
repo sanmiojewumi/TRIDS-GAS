@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { sendReviewNotificationEmail } from '@/lib/email';
 import { checkRateLimit, cleanText } from '@/lib/security';
+import { SITE_URL } from '@/lib/site';
 
 export async function POST(req: Request) {
   const limit = checkRateLimit(req, 'review', { windowMs: 24 * 60 * 60 * 1000, max: 3 });
@@ -41,6 +43,17 @@ export async function POST(req: Request) {
           year: 'numeric',
         }),
       },
+    });
+
+    await sendReviewNotificationEmail({
+      source: 'website',
+      customerName,
+      rating,
+      service,
+      location,
+      review,
+      published: false,
+      permalink: `${SITE_URL}/admin/testimonials`,
     });
 
     return NextResponse.json({ success: true, id: testimonial.id }, { status: 201 });

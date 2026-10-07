@@ -1,4 +1,5 @@
 import { coverageTowns } from '@/lib/coverage';
+import { LOCAL_LANDING_SLUGS } from '@/lib/local-landings';
 import { CORE_BLOG_SLUGS, CORE_SERVICE_SLUGS, PUBLIC_INDEX_ROUTES, absoluteUrl } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
@@ -30,6 +31,11 @@ export async function GET() {
   for (const slug of CORE_SERVICE_SLUGS) {
     const loc = absoluteUrl(`/services/${slug}`);
     urls.set(loc, urlTag(loc, 'weekly', '0.85', lastmod));
+  }
+
+  for (const slug of LOCAL_LANDING_SLUGS) {
+    const loc = absoluteUrl(`/${slug}`);
+    urls.set(loc, urlTag(loc, 'weekly', slug === 'gas-engineer-crewe' ? '0.95' : '0.9', lastmod));
   }
 
   for (const town of coverageTowns) {
