@@ -19,6 +19,7 @@ const contentSecurityPolicy = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  trailingSlash: false,
   turbopack: {
     root: process.cwd(),
   },

@@ -1,6 +1,12 @@
 import { coverageTowns } from '@/lib/coverage';
 import { LOCAL_LANDING_SLUGS } from '@/lib/local-landings';
-import { CORE_BLOG_SLUGS, CORE_SERVICE_SLUGS, PUBLIC_INDEX_ROUTES, absoluteUrl } from '@/lib/seo';
+import {
+  CORE_BLOG_SLUGS,
+  CORE_SERVICE_SLUGS,
+  SERVICE_LANDING_BY_SLUG,
+  SITEMAP_ROUTES,
+  absoluteUrl,
+} from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,44 +14,38 @@ function xmlEscape(value: string) {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function urlTag(loc: string, changefreq: string, priority: string, lastmod: string) {
+function urlTag(loc: string, priority: string, lastmod?: string) {
   return `  <url>
-    <loc>${xmlEscape(loc)}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${changefreq}</changefreq>
+    <loc>${xmlEscape(loc)}</loc>${lastmod ? `\n    <lastmod>${xmlEscape(lastmod)}</lastmod>` : ''}
     <priority>${priority}</priority>
   </url>`;
 }
 
 export async function GET() {
-  const lastmod = new Date().toISOString();
   const urls = new Map<string, string>();
 
-  for (const route of PUBLIC_INDEX_ROUTES) {
-    urls.set(
-      absoluteUrl(route),
-      urlTag(absoluteUrl(route), route === '/' ? 'daily' : 'weekly', route === '/' ? '1.0' : '0.8', lastmod),
-    );
+  const landingPaths = new Set(LOCAL_LANDING_SLUGS.map((slug) => `/${slug}`));
+  for (const route of SITEMAP_ROUTES) {
+    const loc = absoluteUrl(route);
+    const priority = route === '/' ? '1.0' : route === '/gas-engineer-crewe' ? '0.95' : landingPaths.has(route) ? '0.9' : '0.8';
+    urls.set(loc, urlTag(loc, priority));
   }
 
   for (const slug of CORE_SERVICE_SLUGS) {
+    if (SERVICE_LANDING_BY_SLUG[slug]) continue;
     const loc = absoluteUrl(`/services/${slug}`);
-    urls.set(loc, urlTag(loc, 'weekly', '0.85', lastmod));
-  }
-
-  for (const slug of LOCAL_LANDING_SLUGS) {
-    const loc = absoluteUrl(`/${slug}`);
-    urls.set(loc, urlTag(loc, 'weekly', slug === 'gas-engineer-crewe' ? '0.95' : '0.9', lastmod));
+    urls.set(loc, urlTag(loc, '0.75'));
   }
 
   for (const town of coverageTowns) {
+    if (town.miles > 20 || town.slug === 'crewe') continue;
     const loc = absoluteUrl(`/areas/${town.slug}`);
-    urls.set(loc, urlTag(loc, 'weekly', '0.8', lastmod));
+    urls.set(loc, urlTag(loc, '0.65'));
   }
 
   for (const slug of CORE_BLOG_SLUGS) {
     const loc = absoluteUrl(`/blog/${slug}`);
-    urls.set(loc, urlTag(loc, 'monthly', '0.65', lastmod));
+    urls.set(loc, urlTag(loc, '0.55'));
   }
 
   try {
@@ -62,16 +62,18 @@ export async function GET() {
     if (result) {
       const [services, areas, posts] = result;
       for (const service of services) {
+        if (SERVICE_LANDING_BY_SLUG[service.slug]) continue;
         const loc = absoluteUrl(`/services/${service.slug}`);
-        urls.set(loc, urlTag(loc, 'weekly', '0.85', service.updatedAt.toISOString()));
+        urls.set(loc, urlTag(loc, '0.75', service.updatedAt.toISOString()));
       }
       for (const area of areas) {
+        if (area.slug === 'crewe') continue;
         const loc = absoluteUrl(`/areas/${area.slug}`);
-        urls.set(loc, urlTag(loc, 'weekly', '0.8', area.updatedAt.toISOString()));
+        urls.set(loc, urlTag(loc, '0.65', area.updatedAt.toISOString()));
       }
       for (const post of posts) {
         const loc = absoluteUrl(`/blog/${post.slug}`);
-        urls.set(loc, urlTag(loc, 'monthly', '0.65', post.updatedAt.toISOString()));
+        urls.set(loc, urlTag(loc, '0.55', post.updatedAt.toISOString()));
       }
     }
   } catch (error) {

@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 import { QuoteForm } from '@/components/forms/QuoteForm';
-import { areaSeoDescription, areaSeoTitle, coverageTowns, getCoverageTown } from '@/lib/coverage';
+import { areaSeoDescription, areaSeoTitle, coverageTownDetails, coverageTowns, getCoverageTown } from '@/lib/coverage';
 import { breadcrumbJsonLd, pageSeo } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site';
 import { MapPin, Phone, ShieldCheck, Flame, Wrench } from 'lucide-react';
@@ -51,7 +51,8 @@ export async function generateMetadata({ params }: AreaPageProps) {
   const area = await resolveArea(slug);
   if (!area) return { title: 'Area Not Found', robots: { index: false, follow: false } };
 
-  return pageSeo(`/areas/${area.slug}`, {
+  const canonicalPath = area.slug === 'crewe' ? '/gas-engineer-crewe' : `/areas/${area.slug}`;
+  return pageSeo(canonicalPath, {
     title: area.seoTitle || areaSeoTitle(area.name),
     description: area.seoDescription || areaSeoDescription(area.name, area.description),
   });
@@ -100,6 +101,11 @@ export default async function AreaDetailPage({ params }: AreaPageProps) {
             {area.description} TRIDS is a Gas Safe registered engineer based in Crewe, covering
             Cheshire and towns within about 30 miles, plus the extra areas already served.
           </p>
+          {coverageTownDetails[area.slug] ? (
+            <p className="max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
+              {coverageTownDetails[area.slug]}
+            </p>
+          ) : null}
           {area.slug === 'crewe' && (
             <p className="text-sm text-slate-300">
               For boiler repair, servicing, breakdowns and landlord CP12 in Crewe, see the dedicated{' '}

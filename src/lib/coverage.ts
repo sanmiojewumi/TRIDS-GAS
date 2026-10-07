@@ -22,6 +22,51 @@ export const coverageTowns = [
   { slug: 'manchester', name: 'Manchester', miles: 35, description: 'Selected Greater Manchester jobs for boilers, gas safety and plumbing.' },
 ] as const;
 
+export const coverageTownDetails: Record<string, string> = {
+  crewe:
+    'Jobs in Crewe are usually in CW1 and CW2: no-heat callouts, annual services, landlord certificates and cooker connections. The engineer is based in the town, so Crewe is the first coverage area rather than a distant add-on.',
+  nantwich:
+    'Nantwich work is typically CW5 homes around the town centre and the villages off the A51. Common calls are combi lockouts, radiator faults and CP12 records for rented cottages and terraces.',
+  sandbach:
+    'Sandbach and Elworth sit on the CW11 side of the coverage map. Visits from Crewe usually cover boiler servicing, frozen condensate in winter, and gas safety checks on the housing around the cobbles and the bypass.',
+  alsager:
+    'Alsager is a short run east of Crewe. Calls are often boiler pressure loss, noisy heat exchangers and landlord inspections on ST7 properties, with plumbing leaks handled on the same visit where needed.',
+  middlewich:
+    'Middlewich (CW10) jobs are booked from Crewe along the A530. Typical work is no hot water on combis, programmer and thermostat faults, and annual services before the heating season.',
+  winsford:
+    'Winsford coverage includes CW7 estates and the older housing near the town centre. TRIDS attends boiler breakdowns, radiator cold spots and landlord gas safety records without treating Winsford as a separate branch.',
+  audlem:
+    'Audlem and the South Cheshire villages are reached from Crewe for planned servicing and breakdowns. Rural properties often need flue and condensate checks as well as cooker or hob connections.',
+  'holmes-chapel':
+    'Holmes Chapel sits between Crewe and Manchester airport traffic. Calls are usually boiler services, heating controls and CP12 work on CW4 homes, booked as part of the same Crewe diary.',
+  kidsgrove:
+    'Kidsgrove is on the Staffordshire edge of the regular round. Work includes boiler repairs, tightness testing after pipework jobs, and plumbing leaks on ST7 properties.',
+  tarporley:
+    'Tarporley and the mid-Cheshire villages are covered for heating repairs and gas safety. Larger houses often need system-boiler diagnosis, cylinder issues and radiator balancing rather than a combi-only visit.',
+  congleton:
+    'Congleton jobs are scheduled from Crewe for boiler servicing, lockouts and landlord certificates. CW12 properties around the town and the nearby villages are treated as genuine coverage, not copied town pages.',
+  northwich:
+    'Northwich, Hartford and the CW8/CW9 area are in range for boiler repair, servicing and plumbing. Salt-town housing stock often shows up as pressure loss, kettling and failed pumps.',
+  whitchurch:
+    'Whitchurch is a Shropshire market town within the Crewe working radius. Visits are typically boiler services, cooker installs and heating repairs rather than a full-time Shropshire depot.',
+  'newcastle-under-lyme':
+    'Newcastle-under-Lyme coverage is for booked boiler, gas safety and plumbing work from Crewe into Staffordshire. It is offered where the diary and travel make sense, not as a fake second office.',
+  knutsford:
+    'Knutsford calls from Crewe are usually planned services, heating repairs and landlord checks. WA16 properties are accepted when the appointment window is workable.',
+  macclesfield:
+    'Macclesfield and East Cheshire jobs include boiler servicing, repairs and CP12 records. SK10/SK11 visits are booked from the Crewe base rather than a Macclesfield shopfront.',
+  'stoke-on-trent':
+    'Stoke-on-Trent coverage is selected Staffordshire work: boiler installs, servicing, gas safety and plumbing where the job can be completed in a Crewe-based diary slot.',
+  chester:
+    'Chester work is selected west-Cheshire heating and plumbing, not a claim to be a Chester-only firm. Jobs are quoted with travel from Crewe made clear.',
+  warrington:
+    'Warrington callouts are accepted for boilers, leaks and gas safety when the travel from Crewe is practical. It is an extended coverage town, not a second trading address.',
+  stockport:
+    'Stockport heating and CP12 jobs are booked case by case from Crewe. Greater Manchester coverage is real work, not a generated landing page for every postcode.',
+  manchester:
+    'Manchester jobs are selected Greater Manchester boiler, gas safety and plumbing visits from the Crewe engineer, not a city-centre branch.',
+};
+
 export const primarySeoAreas = coverageTowns.filter((town) => town.miles <= 30).map((town) => town.name);
 
 export function areaSeoTitle(name: string): string {

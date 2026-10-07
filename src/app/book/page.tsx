@@ -9,6 +9,7 @@ export const metadata = pageSeo('/book', {
   title: 'Book a Gas Engineer in Crewe | Online Appointment',
   description:
     'Book a boiler service, landlord CP12, heating repair or plumbing visit with a Gas Safe registered engineer in Crewe and Cheshire.',
+  robots: { index: false, follow: true },
 });
 
 export const dynamic = 'force-dynamic';

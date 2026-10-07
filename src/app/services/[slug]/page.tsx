@@ -6,7 +6,7 @@ import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 import { QuoteForm } from '@/components/forms/QuoteForm';
-import { breadcrumbJsonLd, pageSeo } from '@/lib/seo';
+import { breadcrumbJsonLd, pageSeo, SERVICE_LANDING_BY_SLUG } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site';
 import { Flame, Wrench, CheckCircle2, ArrowLeft, ShieldCheck, Phone } from 'lucide-react';
 
@@ -19,7 +19,8 @@ export async function generateMetadata({ params }: ServicePageProps) {
   const service = await db.service.findUnique({ where: { slug } });
   if (!service) return { title: 'Service Not Found' };
 
-  return pageSeo(`/services/${service.slug}`, {
+  const canonicalPath = SERVICE_LANDING_BY_SLUG[service.slug] || `/services/${service.slug}`;
+  return pageSeo(canonicalPath, {
     title: `${service.name} in Crewe | Gas Engineer Cheshire`,
     description: `${service.description} Book a Gas Safe registered engineer from TRIDS in Crewe.`,
   });
@@ -31,6 +32,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   if (!service) notFound();
 
   const settings = await getSiteSettings();
+  const landingHref = SERVICE_LANDING_BY_SLUG[service.slug];
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -85,6 +87,15 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
               {service.description}
             </p>
+            {landingHref ? (
+              <p className="text-sm text-slate-400">
+                Crewe-specific details are on the{' '}
+                <Link href={landingHref} className="font-bold text-amber-400 hover:text-amber-300">
+                  dedicated Crewe page
+                </Link>
+                .
+              </p>
+            ) : null}
 
             <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Link

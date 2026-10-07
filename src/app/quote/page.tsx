@@ -9,6 +9,7 @@ export const metadata = pageSeo('/quote', {
   title: 'Get a Gas Engineer Quote in Crewe | TRIDS',
   description:
     'Request a quote for boiler installation, servicing, landlord CP12 or plumbing repairs from TRIDS Gas & Plumbing in Crewe.',
+  robots: { index: false, follow: true },
 });
 
 export default async function QuotePage({

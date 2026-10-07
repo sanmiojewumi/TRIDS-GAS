@@ -50,8 +50,30 @@ export const PUBLIC_INDEX_ROUTES = [
   ...LOCAL_LANDING_SLUGS.map((slug) => `/${slug}`),
 ] as const;
 
+export const SITEMAP_ROUTES = [
+  '/',
+  '/services',
+  '/about',
+  '/projects',
+  '/reviews',
+  '/faq',
+  '/areas',
+  '/blog',
+  '/contact',
+  ...LOCAL_LANDING_SLUGS.map((slug) => `/${slug}`),
+] as const;
+
+export const SERVICE_LANDING_BY_SLUG: Record<string, string> = {
+  'boiler-repairs': '/boiler-repair-crewe',
+  'boiler-servicing': '/boiler-service-crewe',
+  'gas-safety-checks': '/landlord-gas-safety-crewe',
+  'landlord-gas-safety-certificates': '/landlord-gas-safety-crewe',
+  'central-heating-services': '/central-heating-repair-crewe',
+  'gas-appliance-installation': '/gas-cooker-installation-crewe',
+};
+
 export function absoluteUrl(path = '/'): string {
-  if (!path || path === '/') return SITE_URL;
+  if (!path || path === '/') return `${SITE_URL}/`;
   return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
@@ -70,6 +92,7 @@ export function pageSeo(
     ...extras,
     alternates: {
       canonical,
+      languages: { 'en-GB': canonical },
       ...extras.alternates,
     },
     openGraph: {
@@ -95,7 +118,17 @@ export function pageSeo(
       description,
       ...extras.twitter,
     },
-    robots: extras.robots ?? { index: true, follow: true },
+    robots: extras.robots ?? {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
+    },
   };
 }
 
