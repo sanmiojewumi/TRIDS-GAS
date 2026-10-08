@@ -412,7 +412,7 @@ export async function sendReviewNotificationEmail(params: SendReviewNotification
   const badgeColor = isGoogle ? '#3b82f6' : '#f59e0b';
   const statusLine = isGoogle
     ? 'This review was posted on Google. Reply from Google Business Profile if a response is needed.'
-    : 'This website review is waiting for moderation in Admin → Reviews before it appears on the site.';
+    : 'This website review is now live on the reviews page.';
 
   const htmlContent = `
     <!DOCTYPE html>
