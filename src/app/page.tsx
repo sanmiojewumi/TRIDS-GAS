@@ -6,9 +6,10 @@ import {
   HomepageReview,
   HomepageService,
 } from '@/components/home/HomepageRedesign';
+import { getPublishedReviews } from '@/lib/reviews';
 import { pageSeo } from '@/lib/seo';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   return pageSeo('/', {
@@ -51,23 +52,7 @@ export default async function HomePage() {
   }
 
   try {
-    const rawReviews = await db.testimonial.findMany({
-      where: {
-        published: true,
-        id: { notIn: ['review-1', 'review-2', 'review-3', 'review-4'] },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 3,
-    });
-    reviews = rawReviews.map((review) => ({
-      id: review.id,
-      customerName: review.customerName,
-      review: review.review,
-      rating: review.rating,
-      service: review.service,
-      location: review.location,
-      date: review.date,
-    }));
+    reviews = await getPublishedReviews(3);
   } catch (error) {
     console.error('Error loading homepage reviews:', error);
   }

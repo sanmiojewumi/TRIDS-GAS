@@ -1,6 +1,6 @@
 import { db } from './db';
 import { isPublicHttpsUrl } from './security';
-import { OFFICIAL_EMAIL, GOOGLE_WRITE_REVIEW_URL } from './site';
+import { OFFICIAL_EMAIL, GOOGLE_REVIEWS_URL } from './site';
 
 export interface SiteSettingsData {
   companyName: string;
@@ -43,7 +43,7 @@ export const defaultSettings: SiteSettingsData = {
   secondaryCtaText: 'CALL NOW',
   openingHours: 'Mon - Fri: 08:00 - 18:00 | Saturday mornings by arrangement',
   address: 'Based in Crewe, covering Cheshire and towns within 30 miles, plus Warrington, Stockport, Manchester and Stoke-on-Trent',
-  googleReviewsUrl: GOOGLE_WRITE_REVIEW_URL,
+  googleReviewsUrl: GOOGLE_REVIEWS_URL,
   facebookUrl: '',
   instagramUrl: '',
   tiktokUrl: '',
@@ -70,7 +70,7 @@ export function getPublicSocialUrls(settings: SiteSettingsData): string[] {
 export function getReviewsTargetUrl(settings: SiteSettingsData): string {
   return isPublicHttpsUrl(settings.googleReviewsUrl)
     ? settings.googleReviewsUrl
-    : GOOGLE_WRITE_REVIEW_URL;
+    : GOOGLE_REVIEWS_URL;
 }
 
 export async function getSiteSettings(): Promise<SiteSettingsData> {

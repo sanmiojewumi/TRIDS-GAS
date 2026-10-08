@@ -41,6 +41,7 @@ export interface HomepageReview {
   service: string;
   location?: string | null;
   date: string;
+  source?: 'google' | 'website';
 }
 
 interface HomepageRedesignProps {
@@ -570,8 +571,8 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
                     <div className="mt-6 border-t border-slate-200 pt-4">
                       <p className="font-extrabold text-slate-900">{review.customerName}</p>
                       <p className="mt-1 text-xs font-semibold text-slate-500">
-                        {review.service}
-                        {review.location ? ` · ${review.location}` : ''}
+                        {review.source === 'google' ? 'Google review' : review.service}
+                        {review.location && review.source !== 'google' ? ` · ${review.location}` : ''}
                       </p>
                     </div>
                   </article>
@@ -579,10 +580,10 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
               </div>
             ) : (
               <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-8 text-sm leading-6 text-slate-600">
-                Published customer reviews will appear here. After a completed job we ask for an honest Google
-                review — never bought or scripted wording.
+                Customer reviews from Google and this website appear here. If a review is missing, it may
+                still be syncing from Google.
                 <Link href="/reviews" className="ml-1 font-extrabold text-blue-700 hover:text-blue-800">
-                  Leave or read a review
+                  View all reviews
                 </Link>
               </div>
             )}

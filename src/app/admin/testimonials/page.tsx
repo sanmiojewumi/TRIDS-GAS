@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { MessageSquare, Plus, Trash2, Edit3, ArrowLeft, CheckCircle2, AlertCircle, Eye, EyeOff, Star } from 'lucide-react';
+import { MessageSquare, Plus, Trash2, Edit3, ArrowLeft, CheckCircle2, AlertCircle, Download, Star } from 'lucide-react';
 
 interface TestimonialData {
   id: string;
@@ -30,6 +30,7 @@ export default function AdminTestimonialsPage() {
   const [published, setPublished] = useState(true);
 
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   const fetchTestimonials = async () => {
     setLoading(true);
@@ -87,6 +88,66 @@ export default function AdminTestimonialsPage() {
     }
   };
 
+  const handleGoogleSync = async () => {
+    setSyncing(true);
+    setFeedback(null);
+    try {
+      const res = await fetch('/api/admin/testimonials/sync-google', { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Could not import Google reviews.');
+      }
+      if (data.skipped) {
+        setFeedback({
+          type: 'error',
+          message:
+            data.skipped === 'GOOGLE_PLACES_API_KEY is not set'
+              ? 'Add GOOGLE_PLACES_API_KEY in the server environment, then try again.'
+              : String(data.skipped),
+        });
+        return;
+      }
+      setFeedback({
+        type: 'success',
+        message: `Checked ${data.checked || 0} Google review(s) and imported ${data.imported || 0} new one(s).`,
+      });
+      fetchTestimonials();
+    } catch (err: unknown) {
+      setFeedback({
+        type: 'error',
+        message: err instanceof Error ? err.message : 'Could not import Google reviews.',
+      });
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const handleTogglePublish = async (item: TestimonialData) => {
+    try {
+      const res = await fetch(`/api/admin/testimonials/${item.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: !item.published }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Could not update review visibility.');
+      }
+      setTestimonials((current) =>
+        current.map((t) => (t.id === item.id ? { ...t, published: !item.published } : t)),
+      );
+      setFeedback({
+        type: 'success',
+        message: !item.published ? 'Review is now on the website.' : 'Review hidden from the website.',
+      });
+    } catch (err: unknown) {
+      setFeedback({
+        type: 'error',
+        message: err instanceof Error ? err.message : 'Could not update review visibility.',
+      });
+    }
+  };
+
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to remove the review from "${name}"?`)) return;
 
@@ -137,16 +198,26 @@ export default function AdminTestimonialsPage() {
               CUSTOMER REVIEWS & TESTIMONIALS MANAGER
             </h1>
             <p className="text-xs text-slate-400 mt-1">
-              Add new verified customer reviews, edit ratings, approve testimonials, or remove bad reviews.
+              Import Google reviews, publish them on the website, or add a review written on this site.
             </p>
           </div>
 
-          <button
-            onClick={() => { resetForm(); setShowForm(!showForm); }}
-            className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-glow-gold flex items-center justify-center gap-2"
-          >
-            {showForm ? 'Close Form' : <><Plus className="w-4 h-4" /> Add New Customer Review</>}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              type="button"
+              onClick={handleGoogleSync}
+              disabled={syncing}
+              className="px-5 py-3 rounded-xl bg-[#0F1C3F] text-amber-300 font-extrabold text-xs border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 disabled:opacity-60 flex items-center justify-center gap-2"
+            >
+              <Download className="w-4 h-4" /> {syncing ? 'Importing…' : 'Import Google reviews'}
+            </button>
+            <button
+              onClick={() => { resetForm(); setShowForm(!showForm); }}
+              className="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shadow-glow-gold flex items-center justify-center gap-2"
+            >
+              {showForm ? 'Close Form' : <><Plus className="w-4 h-4" /> Add New Customer Review</>}
+            </button>
+          </div>
         </div>
 
         {/* Feedback Alert */}
@@ -290,6 +361,13 @@ export default function AdminTestimonialsPage() {
                   </span>
 
                   <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePublish(item)}
+                      className="px-2 py-1 rounded-lg bg-[#070D1E] text-slate-300 hover:text-white border border-[#1E3A8A] text-[10px] font-bold"
+                    >
+                      {item.published ? 'Hide' : 'Show on website'}
+                    </button>
                     <button onClick={() => startEdit(item)} className="p-2 rounded-lg bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/40 text-xs font-bold">
                       <Edit3 className="w-4 h-4" />
                     </button>

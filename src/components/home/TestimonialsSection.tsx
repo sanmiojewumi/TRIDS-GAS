@@ -11,6 +11,7 @@ export interface TestimonialItem {
   service: string;
   location?: string | null;
   date: string;
+  source?: 'google' | 'website';
 }
 
 interface TestimonialsProps {
@@ -121,10 +122,18 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
         {/* Reviews Cards Grid */}
         {testimonials.length === 0 && (
           <div className="mb-8 p-8 rounded-2xl border border-[#1E3A8A] bg-[#0F1C3F]/60 text-center text-slate-300 text-sm">
-            Reviews will appear here once published. Thank you for choosing TRIDS. If you&apos;re happy
-            with the work, an honest Google review helps this small local business — we never buy reviews
-            or tell customers what to write. Use <strong className="text-white">Leave a Review</strong> below
-            or ask after a completed job.
+            No reviews are showing here yet. Google reviews are imported onto this page, and reviews left
+            with <strong className="text-white">Leave a Review</strong> appear as soon as they are submitted.
+            {hasGoogleReviews ? (
+              <>
+                {' '}
+                You can also read them on{' '}
+                <a href={googleReviewsUrl} target="_blank" rel="noopener noreferrer" className="font-extrabold text-amber-400 hover:text-amber-300">
+                  Google
+                </a>
+                .
+              </>
+            ) : null}
           </div>
         )}
 
@@ -151,7 +160,9 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
                 <div className="text-sm font-bold text-white">
                   <span>{t.customerName}</span>
                 </div>
-                <div className="text-xs text-amber-400 font-mono mt-0.5">{t.service}</div>
+                <div className="text-xs text-amber-400 font-mono mt-0.5">
+                  {t.source === 'google' ? 'Google review' : t.service}
+                </div>
                 <div className="text-[10px] text-slate-400 font-mono mt-1">{t.date}</div>
               </div>
             </div>
@@ -181,7 +192,7 @@ export const TestimonialsSection: React.FC<TestimonialsProps> = ({
                 <div className="p-6 bg-emerald-950/80 border border-emerald-500/40 rounded-2xl text-center space-y-2">
                   <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
                   <h4 className="text-lg font-bold text-white">Thank You!</h4>
-                  <p className="text-xs text-slate-300">Your review has been submitted for moderation.</p>
+                  <p className="text-xs text-slate-300">Your review is now on the TRIDS website.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">

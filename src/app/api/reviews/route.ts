@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         rating,
         service,
         location: location || null,
-        published: false,
+        published: true,
         date: new Date().toLocaleDateString('en-GB', {
           day: 'numeric',
           month: 'short',
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       service,
       location,
       review,
-      published: false,
+      published: true,
       permalink: `${SITE_URL}/admin/testimonials`,
     });
 
