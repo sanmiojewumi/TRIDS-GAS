@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { MapPin, ArrowRight } from 'lucide-react';
+import { areaPagePath } from '@/lib/coverage';
 
 export interface ServiceAreaItem {
   id: string;
@@ -46,7 +47,7 @@ export const ServiceAreasSection: React.FC<ServiceAreasProps> = ({
           {areas.map((area) => (
             <Link
               key={area.id}
-              href={`/areas/${area.slug}`}
+              href={areaPagePath(area.slug)}
               className="glass-card glass-card-hover rounded-2xl p-5 border border-[#1E3A8A] flex flex-col justify-between group hover:border-amber-400/60 transition-all"
             >
               <div>

@@ -23,7 +23,7 @@ export const LOCAL_LANDING_SLUGS = [
 export type LocalLandingSlug = (typeof LOCAL_LANDING_SLUGS)[number];
 
 const nearbyTowns = [
-  { href: '/areas/crewe', label: 'Crewe' },
+  { href: '/gas-engineer-crewe', label: 'Crewe' },
   { href: '/areas/nantwich', label: 'Nantwich' },
   { href: '/areas/sandbach', label: 'Sandbach' },
   { href: '/areas/middlewich', label: 'Middlewich' },
@@ -192,7 +192,7 @@ export const localLandings: Record<LocalLandingSlug, LocalLandingContent> = {
     related: [
       { href: '/boiler-service-crewe', label: 'Boiler service Crewe' },
       { href: '/gas-engineer-crewe', label: 'Gas engineer Crewe' },
-      { href: '/areas/crewe', label: 'Crewe coverage' },
+      { href: '/gas-engineer-crewe', label: 'Crewe coverage' },
     ],
   },
   'central-heating-repair-crewe': {

@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 import { QuoteForm } from '@/components/forms/QuoteForm';
-import { areaSeoDescription, areaSeoTitle, coverageTownDetails, coverageTowns, getCoverageTown } from '@/lib/coverage';
+import { areaPagePath, areaSeoDescription, areaSeoTitle, coverageTownDetails, coverageTowns, getCoverageTown } from '@/lib/coverage';
 import { breadcrumbJsonLd, pageSeo } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site';
 import { MapPin, Phone, ShieldCheck, Flame, Wrench } from 'lucide-react';
@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: AreaPageProps) {
   const area = await resolveArea(slug);
   if (!area) return { title: 'Area Not Found', robots: { index: false, follow: false } };
 
-  const canonicalPath = area.slug === 'crewe' ? '/gas-engineer-crewe' : `/areas/${area.slug}`;
+  const canonicalPath = areaPagePath(area.slug);
   return pageSeo(canonicalPath, {
     title: area.seoTitle || areaSeoTitle(area.name),
     description: area.seoDescription || areaSeoDescription(area.name, area.description),
@@ -77,12 +77,12 @@ export default async function AreaDetailPage({ params }: AreaPageProps) {
       url: SITE_URL,
     },
     areaServed: area.name,
-    url: `${SITE_URL}/areas/${area.slug}`,
+    url: `${SITE_URL}${areaPagePath(area.slug)}`,
   };
   const crumbs = breadcrumbJsonLd([
     { name: 'Home', path: '/' },
     { name: 'Service areas', path: '/areas' },
-    { name: area.name, path: `/areas/${area.slug}` },
+    { name: area.name, path: areaPagePath(area.slug) },
   ]);
 
   return (
@@ -172,7 +172,7 @@ export default async function AreaDetailPage({ params }: AreaPageProps) {
                   {nearby.map((town) => (
                     <Link
                       key={town.slug}
-                      href={`/areas/${town.slug}`}
+                      href={areaPagePath(town.slug)}
                       className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-200 hover:border-amber-400 hover:text-amber-300"
                     >
                       {town.name}

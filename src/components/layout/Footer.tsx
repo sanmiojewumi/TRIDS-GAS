@@ -4,7 +4,7 @@ import { TRIDSLogo } from '../common/TRIDSLogo';
 import { SocialLinks } from '../common/SocialLinks';
 import { ShieldCheck, Phone, Mail, MapPin } from 'lucide-react';
 import { SiteSettingsData } from '@/lib/settings';
-import { coverageTowns } from '@/lib/coverage';
+import { areaPagePath, coverageTowns } from '@/lib/coverage';
 
 interface FooterProps {
   settings: SiteSettingsData;
@@ -21,7 +21,7 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
     ['Gas Cooker Installation', '/gas-cooker-installation-crewe'],
   ];
 
-  const areaLinks = coverageTowns.slice(0, 10).map((town) => [town.name, `/areas/${town.slug}`]);
+  const areaLinks = coverageTowns.slice(0, 10).map((town) => [town.name, areaPagePath(town.slug)]);
 
   return (
     <footer className="relative overflow-hidden border-t border-slate-800 bg-[#050a14] pb-16 text-slate-400 lg:pb-0">

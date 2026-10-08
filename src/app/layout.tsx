@@ -3,8 +3,9 @@ import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { getPublicSocialUrls, getSiteSettings } from '@/lib/settings';
 import { SiteChrome } from '@/components/layout/SiteChrome';
-import { SITE_URL } from '@/lib/site';
+import { GOOGLE_MAPS_PLACE_URL, SITE_URL } from '@/lib/site';
 import { DEFAULT_OG_IMAGE, buildBusinessJsonLd } from '@/lib/seo';
+import { getPublishedReviewSummary } from '@/lib/reviews';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,33 +32,13 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: `Gas Safe registered gas engineer and plumber in Crewe covering Cheshire, towns within 30 miles of Crewe, plus Warrington, Stockport, Manchester and Stoke-on-Trent. Boiler repair, servicing, installation and CP12. Call ${settings.phone}.`,
     keywords: [
-      'gas engineer',
-      'gas engineer near me',
-      'gas Crewe',
       'gas engineer Crewe',
-      'gas engineer in Crewe',
-      'plumber Crewe',
       'boiler repair Crewe',
       'boiler service Crewe',
       'boiler breakdown Crewe',
       'heating engineer Crewe',
-      'landlord gas safety certificate Crewe',
       'landlord CP12 Crewe',
-      'central heating repair Crewe',
-      'gas cooker installation Crewe',
-      'gas Cheshire',
       'gas engineer Cheshire',
-      'gas engineer in Cheshire',
-      'plumber Cheshire',
-      'gas engineer Nantwich',
-      'gas engineer Sandbach',
-      'gas engineer Winsford',
-      'gas engineer Congleton',
-      'gas engineer Northwich',
-      'gas engineer Alsager',
-      'gas engineer Middlewich',
-      'landlord CP12 Crewe',
-      'Gas Safe Registered 979661',
       'TRIDS Gas & Plumbing',
     ],
     authors: [{ name: settings.companyName }],
@@ -65,7 +46,12 @@ export async function generateMetadata(): Promise<Metadata> {
     publisher: settings.companyName,
     category: 'home services',
     applicationName: settings.companyName,
-    ...(googleVerification ? { verification: { google: googleVerification } } : {}),
+    verification: {
+      ...(googleVerification ? { google: googleVerification } : {}),
+      ...(process.env.BING_SITE_VERIFICATION?.trim()
+        ? { other: { 'msvalidate.01': process.env.BING_SITE_VERIFICATION.trim() } }
+        : {}),
+    },
     openGraph: {
       type: 'website',
       locale: 'en_GB',
@@ -106,12 +92,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const settings = await getSiteSettings();
-  const sameAs = getPublicSocialUrls(settings);
-
-  const schemaJsonLd = buildBusinessJsonLd(settings, sameAs);
+  const sameAs = Array.from(new Set([...getPublicSocialUrls(settings), GOOGLE_MAPS_PLACE_URL]));
+  const rating = await getPublishedReviewSummary();
+  const schemaJsonLd = buildBusinessJsonLd(settings, sameAs, rating);
 
   return (
-    <html lang="en" className={`${inter.variable} ${jakarta.variable} dark scroll-smooth overflow-x-hidden`}>
+    <html lang="en-GB" className={`${inter.variable} ${jakarta.variable} dark scroll-smooth overflow-x-hidden`}>
       <head>
         <script
           type="application/ld+json"

@@ -23,3 +23,4 @@ export const GOOGLE_PLACE_ID =
   process.env.GOOGLE_PLACE_ID?.trim() || 'ChIJ99Yesx0OdkgRM0azRWAqYqM';
 export const GOOGLE_REVIEWS_URL = `https://search.google.com/local/reviews?placeid=${GOOGLE_PLACE_ID}`;
 export const GOOGLE_WRITE_REVIEW_URL = `https://search.google.com/local/writereview?placeid=${GOOGLE_PLACE_ID}`;
+export const GOOGLE_MAPS_PLACE_URL = `https://www.google.com/maps/search/?api=1&query=TRIDS%20Gas%20%26%20Plumbing%20Crewe&query_place_id=${GOOGLE_PLACE_ID}`;

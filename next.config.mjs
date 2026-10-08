@@ -41,6 +41,8 @@ const nextConfig = {
       { source: '/landlord-gas-safety-crewe/', destination: '/landlord-gas-safety-crewe', permanent: true },
       { source: '/central-heating-repair-crewe/', destination: '/central-heating-repair-crewe', permanent: true },
       { source: '/gas-cooker-installation-crewe/', destination: '/gas-cooker-installation-crewe', permanent: true },
+      { source: '/areas/crewe', destination: '/gas-engineer-crewe', permanent: true },
+      { source: '/areas/crewe/', destination: '/gas-engineer-crewe', permanent: true },
     ];
   },
   async headers() {

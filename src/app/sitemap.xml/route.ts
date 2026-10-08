@@ -7,6 +7,7 @@ import {
   SITEMAP_ROUTES,
   absoluteUrl,
 } from '@/lib/seo';
+import { notifyIndexNow } from '@/lib/indexnow';
 
 export const dynamic = 'force-dynamic';
 
@@ -85,6 +86,8 @@ export async function GET() {
 ${Array.from(urls.values()).join('\n')}
 </urlset>
 `;
+
+  await notifyIndexNow(Array.from(urls.keys()));
 
   return new Response(xml, {
     status: 200,

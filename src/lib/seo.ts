@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { LOCAL_LANDING_SLUGS } from '@/lib/local-landings';
 import { coverageTowns } from '@/lib/coverage';
 import type { SiteSettingsData } from '@/lib/settings';
-import { SITE_URL } from '@/lib/site';
+import { GOOGLE_MAPS_PLACE_URL, SITE_URL } from '@/lib/site';
 
 export const DEFAULT_OG_IMAGE = '/images/slides/slide1.jpg';
 
@@ -132,7 +132,11 @@ export function pageSeo(
   };
 }
 
-export function buildBusinessJsonLd(settings: SiteSettingsData, sameAs: string[]) {
+export function buildBusinessJsonLd(
+  settings: SiteSettingsData,
+  sameAs: string[],
+  rating?: { ratingValue: number; reviewCount: number } | null,
+) {
   const logo = absoluteUrl('/images/trids-logo.png');
   const image = absoluteUrl(DEFAULT_OG_IMAGE);
 
@@ -228,16 +232,30 @@ export function buildBusinessJsonLd(settings: SiteSettingsData, sameAs: string[]
         ],
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
-          name: 'Gas and plumbing services',
+          name: 'Gas and plumbing services in Crewe',
           itemListElement: [
-            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Boiler repairs', url: absoluteUrl('/services/boiler-repairs') } },
-            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Boiler servicing', url: absoluteUrl('/services/boiler-servicing') } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Gas engineer in Crewe', url: absoluteUrl('/gas-engineer-crewe') } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Boiler repair in Crewe', url: absoluteUrl('/boiler-repair-crewe') } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Boiler service in Crewe', url: absoluteUrl('/boiler-service-crewe') } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Boiler breakdown in Crewe', url: absoluteUrl('/boiler-breakdown-crewe') } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Landlord gas safety certificate in Crewe', url: absoluteUrl('/landlord-gas-safety-crewe') } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Central heating repair in Crewe', url: absoluteUrl('/central-heating-repair-crewe') } },
+            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Gas cooker installation in Crewe', url: absoluteUrl('/gas-cooker-installation-crewe') } },
             { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Boiler installation', url: absoluteUrl('/services/boiler-installation') } },
-            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Gas safety checks and CP12', url: absoluteUrl('/services/gas-safety-checks') } },
-            { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Central heating services', url: absoluteUrl('/services/central-heating-services') } },
             { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'General plumbing', url: absoluteUrl('/services/general-plumbing') } },
           ],
         },
+        ...(rating && rating.reviewCount > 0
+          ? {
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: rating.ratingValue,
+                reviewCount: rating.reviewCount,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }
+          : {}),
         ...(sameAs.length ? { sameAs } : {}),
       },
     ],

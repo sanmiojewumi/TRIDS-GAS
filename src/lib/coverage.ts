@@ -81,6 +81,10 @@ export function getCoverageTown(slug: string) {
   return coverageTowns.find((town) => town.slug === slug);
 }
 
+export function areaPagePath(slug: string) {
+  return slug === 'crewe' ? '/gas-engineer-crewe' : `/areas/${slug}`;
+}
+
 export function coverageAreasForListing() {
   return coverageTowns.map((town) => ({
     id: town.slug,

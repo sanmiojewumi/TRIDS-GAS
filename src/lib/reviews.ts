@@ -30,6 +30,31 @@ async function publishWaitingReviews() {
   }
 }
 
+export async function getPublishedReviewSummary(): Promise<{
+  ratingValue: number;
+  reviewCount: number;
+} | null> {
+  try {
+    const rows = await db.testimonial.findMany({
+      where: {
+        published: true,
+        id: { notIn: HIDDEN_SEED_IDS },
+        customerName: { not: 'Notification check' },
+      },
+      select: { rating: true },
+    });
+    if (!rows.length) return null;
+    const total = rows.reduce((sum, row) => sum + (row.rating || 0), 0);
+    return {
+      ratingValue: Number((total / rows.length).toFixed(1)),
+      reviewCount: rows.length,
+    };
+  } catch (error) {
+    console.error('Error loading review summary.', error);
+    return null;
+  }
+}
+
 export async function getPublishedReviews(limit?: number): Promise<PublicReview[]> {
   await publishWaitingReviews();
   await Promise.race([
