@@ -254,7 +254,7 @@ export const localLandings: Record<LocalLandingSlug, LocalLandingContent> = {
     related: [
       { href: '/gas-engineer-crewe', label: 'Gas engineer Crewe' },
       { href: '/landlord-gas-safety-crewe', label: 'Landlord CP12 Crewe' },
-      { href: '/services/gas-appliance-installation', label: 'Gas appliance installation' },
+      { href: '/gas-cooker-installation-crewe', label: 'Gas cooker installation Crewe' },
     ],
   },
 };

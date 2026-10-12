@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import { LOCAL_LANDING_SLUGS } from '@/lib/local-landings';
 import { coverageTowns } from '@/lib/coverage';
 import type { SiteSettingsData } from '@/lib/settings';
-import { GOOGLE_MAPS_PLACE_URL, SITE_URL } from '@/lib/site';
+import { SITE_URL } from '@/lib/site';
+import { SERVICE_LANDING_BY_SLUG } from '@/lib/paths';
+
+export { SERVICE_LANDING_BY_SLUG, servicePagePath } from '@/lib/paths';
 
 export const DEFAULT_OG_IMAGE = '/images/slides/slide1.jpg';
 
@@ -63,14 +66,21 @@ export const SITEMAP_ROUTES = [
   ...LOCAL_LANDING_SLUGS.map((slug) => `/${slug}`),
 ] as const;
 
-export const SERVICE_LANDING_BY_SLUG: Record<string, string> = {
-  'boiler-repairs': '/boiler-repair-crewe',
-  'boiler-servicing': '/boiler-service-crewe',
-  'gas-safety-checks': '/landlord-gas-safety-crewe',
-  'landlord-gas-safety-certificates': '/landlord-gas-safety-crewe',
-  'central-heating-services': '/central-heating-repair-crewe',
-  'gas-appliance-installation': '/gas-cooker-installation-crewe',
-};
+export function canonicalPublicPaths(): string[] {
+  const paths = [...SITEMAP_ROUTES];
+  for (const slug of CORE_SERVICE_SLUGS) {
+    if (SERVICE_LANDING_BY_SLUG[slug]) continue;
+    paths.push(`/services/${slug}`);
+  }
+  for (const town of coverageTowns) {
+    if (town.miles > 20 || town.slug === 'crewe') continue;
+    paths.push(`/areas/${town.slug}`);
+  }
+  for (const slug of CORE_BLOG_SLUGS) {
+    paths.push(`/blog/${slug}`);
+  }
+  return paths;
+}
 
 export function absoluteUrl(path = '/'): string {
   if (!path || path === '/') return `${SITE_URL}/`;

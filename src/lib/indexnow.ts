@@ -6,11 +6,15 @@ const globalForIndexNow = globalThis as unknown as {
   tridsIndexNowAt?: number;
 };
 
-export async function notifyIndexNow(urls: string[]): Promise<void> {
+export async function notifyIndexNow(urls: string[], options?: { force?: boolean }): Promise<void> {
   if (process.env.NODE_ENV === 'development') return;
 
   const now = Date.now();
-  if (globalForIndexNow.tridsIndexNowAt && now - globalForIndexNow.tridsIndexNowAt < 12 * 60 * 60 * 1000) {
+  if (
+    !options?.force &&
+    globalForIndexNow.tridsIndexNowAt &&
+    now - globalForIndexNow.tridsIndexNowAt < 12 * 60 * 60 * 1000
+  ) {
     return;
   }
 

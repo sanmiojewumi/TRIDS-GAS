@@ -16,7 +16,7 @@ export const FeaturedSection: React.FC = () => {
     {
       title: 'Boiler Servicing',
       description: 'Keep your heating system running safely and efficiently with flue gas diagnostics.',
-      link: '/services/boiler-servicing',
+      link: '/boiler-service-crewe',
       image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80',
       icon: Flame,
       highlight: 'Full Flue Gas Analysis',
@@ -24,7 +24,7 @@ export const FeaturedSection: React.FC = () => {
     {
       title: 'Gas Safety & CP12',
       description: 'Professional gas safety inspections, testing, and landlord certificates.',
-      link: '/services/gas-safety-checks',
+      link: '/landlord-gas-safety-crewe',
       image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
       icon: ShieldCheck,
       highlight: 'Gas Safe CP12 Certificates',

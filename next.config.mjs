@@ -32,6 +32,9 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [{ source: '/.well-known/llms.txt', destination: '/llms.txt' }];
+  },
   async redirects() {
     return [
       { source: '/gas-engineer-crewe/', destination: '/gas-engineer-crewe', permanent: true },
@@ -43,6 +46,18 @@ const nextConfig = {
       { source: '/gas-cooker-installation-crewe/', destination: '/gas-cooker-installation-crewe', permanent: true },
       { source: '/areas/crewe', destination: '/gas-engineer-crewe', permanent: true },
       { source: '/areas/crewe/', destination: '/gas-engineer-crewe', permanent: true },
+      { source: '/services/boiler-repairs', destination: '/boiler-repair-crewe', permanent: true },
+      { source: '/services/boiler-repairs/', destination: '/boiler-repair-crewe', permanent: true },
+      { source: '/services/boiler-servicing', destination: '/boiler-service-crewe', permanent: true },
+      { source: '/services/boiler-servicing/', destination: '/boiler-service-crewe', permanent: true },
+      { source: '/services/gas-safety-checks', destination: '/landlord-gas-safety-crewe', permanent: true },
+      { source: '/services/gas-safety-checks/', destination: '/landlord-gas-safety-crewe', permanent: true },
+      { source: '/services/landlord-gas-safety-certificates', destination: '/landlord-gas-safety-crewe', permanent: true },
+      { source: '/services/landlord-gas-safety-certificates/', destination: '/landlord-gas-safety-crewe', permanent: true },
+      { source: '/services/central-heating-services', destination: '/central-heating-repair-crewe', permanent: true },
+      { source: '/services/central-heating-services/', destination: '/central-heating-repair-crewe', permanent: true },
+      { source: '/services/gas-appliance-installation', destination: '/gas-cooker-installation-crewe', permanent: true },
+      { source: '/services/gas-appliance-installation/', destination: '/gas-cooker-installation-crewe', permanent: true },
     ];
   },
   async headers() {

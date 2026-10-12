@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Flame, Wrench, Search, ArrowRight, Sparkles, ShieldAlert } from 'lucide-react';
+import { servicePagePath } from '@/lib/paths';
 
 export interface ServiceItem {
   id: string;
@@ -164,7 +165,7 @@ export const ServicesSection: React.FC<ServicesProps> = ({ services }) => {
               {/* Bottom Actions */}
               <div className="mt-6 pt-4 border-t border-[#1E3A8A]/60 flex items-center justify-between gap-3">
                 <Link
-                  href={`/services/${service.slug}`}
+                  href={servicePagePath(service.slug)}
                   className="text-xs font-semibold text-slate-300 hover:text-yellow-400 flex items-center gap-1 transition-colors"
                 >
                   Learn More <ArrowRight className="w-3.5 h-3.5" />

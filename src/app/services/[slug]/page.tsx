@@ -1,14 +1,14 @@
 import React from 'react';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { db } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { GasSafeBadge } from '@/components/common/GasSafeBadge';
 import { QuoteForm } from '@/components/forms/QuoteForm';
-import { breadcrumbJsonLd, pageSeo, SERVICE_LANDING_BY_SLUG } from '@/lib/seo';
+import { breadcrumbJsonLd, pageSeo, SERVICE_LANDING_BY_SLUG, servicePagePath } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site';
-import { Flame, Wrench, CheckCircle2, ArrowLeft, ShieldCheck, Phone } from 'lucide-react';
+import { Flame, Wrench, CheckCircle2, ArrowLeft, Phone } from 'lucide-react';
 
 interface ServicePageProps {
   params: Promise<{ slug: string }>;
@@ -16,10 +16,14 @@ interface ServicePageProps {
 
 export async function generateMetadata({ params }: ServicePageProps) {
   const { slug } = await params;
+  const landing = SERVICE_LANDING_BY_SLUG[slug];
+  if (landing) {
+    return { robots: { index: false, follow: true } };
+  }
   const service = await db.service.findUnique({ where: { slug } });
   if (!service) return { title: 'Service Not Found' };
 
-  const canonicalPath = SERVICE_LANDING_BY_SLUG[service.slug] || `/services/${service.slug}`;
+  const canonicalPath = servicePagePath(service.slug);
   return pageSeo(canonicalPath, {
     title: `${service.name} in Crewe | Gas Engineer Cheshire`,
     description: `${service.description} Book a Gas Safe registered engineer from TRIDS in Crewe.`,
@@ -31,8 +35,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const service = await db.service.findUnique({ where: { slug } });
   if (!service) notFound();
 
+  if (SERVICE_LANDING_BY_SLUG[service.slug]) {
+    redirect(SERVICE_LANDING_BY_SLUG[service.slug]);
+  }
+
   const settings = await getSiteSettings();
-  const landingHref = SERVICE_LANDING_BY_SLUG[service.slug];
+  const canonicalPath = servicePagePath(service.slug);
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -46,12 +54,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       url: SITE_URL,
     },
     areaServed: ['Crewe', 'Cheshire'],
-    url: `${SITE_URL}/services/${service.slug}`,
+    url: `${SITE_URL}${canonicalPath}`,
   };
   const crumbs = breadcrumbJsonLd([
     { name: 'Home', path: '/' },
     { name: 'Services', path: '/services' },
-    { name: service.name, path: `/services/${service.slug}` },
+    { name: service.name, path: canonicalPath },
   ]);
 
   return (
@@ -87,16 +95,6 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
               {service.description}
             </p>
-            {landingHref ? (
-              <p className="text-sm text-slate-400">
-                Crewe-specific details are on the{' '}
-                <Link href={landingHref} className="font-bold text-amber-400 hover:text-amber-300">
-                  dedicated Crewe page
-                </Link>
-                .
-              </p>
-            ) : null}
-
             <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Link
                 href={`/book?service=${encodeURIComponent(service.name)}`}

@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import type { SiteSettingsData } from '@/lib/settings';
 import { GasSafeLogoBadge } from '@/components/common/GasSafeLogoBadge';
+import { servicePagePath } from '@/lib/paths';
 
 export interface HomepageService {
   id: string;
@@ -67,14 +68,6 @@ const serviceMeta = {
   'central-heating-services': { icon: ThermometerSun, accent: 'bg-blue-50 text-blue-600' },
   'general-plumbing': { icon: Wrench, accent: 'bg-cyan-50 text-cyan-600' },
 } as const;
-
-const creweLandingBySlug: Record<string, string> = {
-  'boiler-repairs': '/boiler-repair-crewe',
-  'boiler-servicing': '/boiler-service-crewe',
-  'gas-safety-checks': '/landlord-gas-safety-crewe',
-  'central-heating-services': '/central-heating-repair-crewe',
-  'boiler-installation': '/gas-engineer-crewe',
-};
 
 const shortServiceDescriptions: Record<string, string> = {
   'boiler-repairs': 'Diagnosis and repair for boiler faults, lockouts and loss of heat.',
@@ -348,7 +341,7 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
           {quickServices.map((service) => (
             <Link
               key={service.id}
-              href={creweLandingBySlug[service.slug] || `/services/${service.slug}`}
+              href={servicePagePath(service.slug)}
               className="flex min-w-[165px] snap-start items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 hover:text-blue-700 lg:min-w-0 lg:border-r lg:border-slate-200 lg:last:border-0"
             >
               <span>{service.name}</span>
@@ -413,7 +406,7 @@ export const HomepageRedesign: React.FC<HomepageRedesignProps> = ({
                 return (
                   <Link
                     key={service.id}
-                    href={creweLandingBySlug[service.slug] || `/services/${service.slug}`}
+                    href={servicePagePath(service.slug)}
                     className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_35px_rgba(15,23,42,.05)] transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_20px_45px_rgba(15,23,42,.1)]"
                   >
                     <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${meta?.accent || 'bg-slate-100 text-slate-700'}`}>
