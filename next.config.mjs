@@ -33,7 +33,13 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    return [{ source: '/.well-known/llms.txt', destination: '/llms.txt' }];
+    return [
+      { source: '/.well-known/llms.txt', destination: '/llms.txt' },
+      { source: '/icon-48.png', destination: '/brand-icon' },
+      { source: '/icon-96.png', destination: '/brand-icon' },
+      { source: '/icon-512.png', destination: '/brand-icon' },
+      { source: '/favicon.ico', destination: '/brand-icon' },
+    ];
   },
   async redirects() {
     return [
