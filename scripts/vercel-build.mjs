@@ -1,4 +1,7 @@
 import { spawnSync } from 'node:child_process';
+import { sanitizeNpmEnv } from './sanitize-npm-env.mjs';
+
+sanitizeNpmEnv();
 
 const databaseUrl =
   process.env.tridsgas_PRISMA_DATABASE_URL ||
