@@ -9,13 +9,9 @@ export function sanitizeNpmEnv(env = process.env) {
       .toLowerCase()
       .replace(/_/g, '-');
 
-    if (!UNKNOWN_NPM_CONFIGS.has(name)) continue;
-
-    if (name === 'cache-dir' && !env.npm_config_cache) {
-      env.npm_config_cache = env[key];
+    if (UNKNOWN_NPM_CONFIGS.has(name)) {
+      delete env[key];
     }
-
-    delete env[key];
   }
 
   return env;

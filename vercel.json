@@ -1,5 +1,4 @@
 {
-  "installCommand": "node scripts/npm-install.mjs",
   "crons": [
     {
       "path": "/api/cron/google-reviews",
