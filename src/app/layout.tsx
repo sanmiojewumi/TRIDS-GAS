@@ -48,13 +48,12 @@ export async function generateMetadata(): Promise<Metadata> {
     applicationName: settings.companyName,
     icons: {
       icon: [
-        { url: '/brand-icon', sizes: '512x512', type: 'image/png' },
-        { url: '/images/icon-48.png', sizes: '48x48', type: 'image/png' },
+        { url: '/images/trids-search-icon.png', sizes: '48x48', type: 'image/png' },
         { url: '/images/icon-96.png', sizes: '96x96', type: 'image/png' },
         { url: '/images/icon-512.png', sizes: '512x512', type: 'image/png' },
       ],
-      apple: [{ url: '/images/icon-96.png', sizes: '96x96', type: 'image/png' }],
-      shortcut: '/brand-icon',
+      apple: [{ url: '/images/trids-search-icon.png', sizes: '48x48', type: 'image/png' }],
+      shortcut: '/images/trids-search-icon.png',
     },
     verification: {
       ...(googleVerification ? { google: googleVerification } : {}),
