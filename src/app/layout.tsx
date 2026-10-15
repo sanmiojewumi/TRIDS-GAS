@@ -99,6 +99,7 @@ export default async function RootLayout({
   return (
     <html lang="en-GB" className={`${inter.variable} ${jakarta.variable} dark scroll-smooth overflow-x-hidden`}>
       <head>
+        <link rel="alternate" type="text/plain" href={`${SITE_URL}/llms.txt`} title="LLM information" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJsonLd) }}

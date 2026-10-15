@@ -37,6 +37,12 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'tridsgas.com' }],
+        destination: 'https://www.tridsgas.com/:path*',
+        permanent: true,
+      },
       { source: '/gas-engineer-crewe/', destination: '/gas-engineer-crewe', permanent: true },
       { source: '/boiler-repair-crewe/', destination: '/boiler-repair-crewe', permanent: true },
       { source: '/boiler-service-crewe/', destination: '/boiler-service-crewe', permanent: true },
